@@ -11,6 +11,7 @@ import { Plus, Calendar, ArrowLeft } from "lucide-react";
 import { format } from "date-fns";
 import { AddBlogPostDialog } from "@/components/AddBlogPostDialog";
 import { Helmet } from "react-helmet-async";
+import { Logo } from "@/components/Logo";
 
 interface BlogPost {
   id: string;
@@ -49,25 +50,26 @@ const Blog = () => {
       </Helmet>
       
       <div className="min-h-screen bg-background flex flex-col">
-        <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <header className="border-b border-white/[0.06] bg-black/60 backdrop-blur-xl sticky top-0 z-50">
           <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-            <Link to="/landing" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
+            <Link to="/landing" className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors duration-150">
               <ArrowLeft className="h-4 w-4" />
               <span>Back to Home</span>
             </Link>
-            <Link to="/landing" className="text-xl font-bold text-foreground">
-              Pro Pointers Plus
+            <Link to="/landing" className="flex items-center gap-2">
+              <Logo size="sm" />
+              <span className="text-xl font-bold font-heading text-foreground">Pro Pointers Plus</span>
             </Link>
             <div className="w-24" />
           </div>
         </header>
 
-        <main className="flex-1 container mx-auto px-4 py-12">
-          <div className="max-w-4xl mx-auto">
-            <div className="flex items-center justify-between mb-8">
+        <main className="flex-1 container mx-auto px-4 py-16">
+          <div className="max-w-3xl mx-auto">
+            <div className="flex items-center justify-between mb-10">
               <div>
-                <h1 className="text-4xl font-bold text-foreground mb-2">Tennis Coaching Blog</h1>
-                <p className="text-muted-foreground">Tips, strategies, and insights for tennis coaches and players</p>
+                <h1 className="text-4xl md:text-5xl font-bold font-heading text-foreground mb-2 tracking-[-0.02em]">Tennis Coaching Blog</h1>
+                <p className="text-muted-foreground text-lg">Tips, strategies, and insights for tennis coaches and players</p>
               </div>
               {isAdmin && (
                 <Button onClick={() => setShowAddDialog(true)}>
@@ -80,23 +82,19 @@ const Blog = () => {
             {isLoading ? (
               <div className="space-y-6">
                 {[1, 2, 3].map((i) => (
-                  <Card key={i}>
-                    <CardHeader>
-                      <Skeleton className="h-6 w-3/4" />
-                      <Skeleton className="h-4 w-1/4 mt-2" />
-                    </CardHeader>
-                    <CardContent>
-                      <Skeleton className="h-4 w-full" />
-                      <Skeleton className="h-4 w-2/3 mt-2" />
-                    </CardContent>
-                  </Card>
+                  <div key={i} className="glass rounded-2xl p-6">
+                    <Skeleton className="h-6 w-3/4 bg-white/[0.06]" />
+                    <Skeleton className="h-4 w-1/4 mt-3 bg-white/[0.06]" />
+                    <Skeleton className="h-4 w-full mt-4 bg-white/[0.06]" />
+                    <Skeleton className="h-4 w-2/3 mt-2 bg-white/[0.06]" />
+                  </div>
                 ))}
               </div>
             ) : posts && posts.length > 0 ? (
               <div className="space-y-6">
                 {posts.map((post) => (
                   <Link key={post.id} to={`/blog/${post.slug}`}>
-                    <Card className="hover:bg-muted/50 transition-colors cursor-pointer">
+                    <Card className="hover:shadow-[0_0_30px_rgba(16,185,129,0.08)] cursor-pointer transition-all duration-150">
                       <CardHeader>
                         <CardTitle className="text-xl">{post.title}</CardTitle>
                         <CardDescription className="flex items-center gap-2">
@@ -114,11 +112,9 @@ const Blog = () => {
                 ))}
               </div>
             ) : (
-              <Card>
-                <CardContent className="py-12 text-center">
-                  <p className="text-muted-foreground">No articles published yet. Check back soon!</p>
-                </CardContent>
-              </Card>
+              <div className="glass rounded-2xl p-12 text-center">
+                <p className="text-muted-foreground">No articles published yet. Check back soon!</p>
+              </div>
             )}
           </div>
         </main>

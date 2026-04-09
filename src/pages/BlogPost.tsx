@@ -6,6 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowLeft, Calendar } from "lucide-react";
 import { format } from "date-fns";
 import { Helmet } from "react-helmet-async";
+import { Logo } from "@/components/Logo";
 
 interface BlogPost {
   id: string;
@@ -36,22 +37,34 @@ const BlogPost = () => {
     enabled: !!slug,
   });
 
+  const headerBar = (
+    <header className="border-b border-white/[0.06] bg-black/60 backdrop-blur-xl sticky top-0 z-50">
+      <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+        <Link to="/blog" className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors duration-150">
+          <ArrowLeft className="h-4 w-4" />
+          <span>Back to Blog</span>
+        </Link>
+        <Link to="/landing" className="flex items-center gap-2">
+          <Logo size="sm" />
+          <span className="text-xl font-bold font-heading text-foreground">Pro Pointers Plus</span>
+        </Link>
+        <div className="w-24" />
+      </div>
+    </header>
+  );
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background flex flex-col">
-        <header className="border-b border-border bg-background/95 backdrop-blur">
-          <div className="container mx-auto px-4 py-4">
-            <Skeleton className="h-6 w-32" />
-          </div>
-        </header>
-        <main className="flex-1 container mx-auto px-4 py-12">
-          <div className="max-w-3xl mx-auto">
-            <Skeleton className="h-10 w-3/4 mb-4" />
-            <Skeleton className="h-4 w-1/4 mb-8" />
+        {headerBar}
+        <main className="flex-1 container mx-auto px-4 py-16">
+          <div className="max-w-3xl mx-auto glass rounded-2xl p-8 md:p-12">
+            <Skeleton className="h-10 w-3/4 mb-4 bg-white/[0.06]" />
+            <Skeleton className="h-4 w-1/4 mb-8 bg-white/[0.06]" />
             <div className="space-y-4">
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-2/3" />
+              <Skeleton className="h-4 w-full bg-white/[0.06]" />
+              <Skeleton className="h-4 w-full bg-white/[0.06]" />
+              <Skeleton className="h-4 w-2/3 bg-white/[0.06]" />
             </div>
           </div>
         </main>
@@ -63,17 +76,10 @@ const BlogPost = () => {
   if (error || !post) {
     return (
       <div className="min-h-screen bg-background flex flex-col">
-        <header className="border-b border-border bg-background/95 backdrop-blur">
-          <div className="container mx-auto px-4 py-4">
-            <Link to="/blog" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
-              <ArrowLeft className="h-4 w-4" />
-              <span>Back to Blog</span>
-            </Link>
-          </div>
-        </header>
-        <main className="flex-1 container mx-auto px-4 py-12 flex items-center justify-center">
+        {headerBar}
+        <main className="flex-1 container mx-auto px-4 py-16 flex items-center justify-center">
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-foreground mb-2">Article Not Found</h1>
+            <h1 className="text-2xl font-bold font-heading text-foreground mb-2">Article Not Found</h1>
             <p className="text-muted-foreground mb-4">The article you're looking for doesn't exist or has been removed.</p>
             <Link to="/blog" className="text-primary hover:underline">
               Browse all articles
@@ -98,23 +104,12 @@ const BlogPost = () => {
       </Helmet>
 
       <div className="min-h-screen bg-background flex flex-col">
-        <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-          <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-            <Link to="/blog" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
-              <ArrowLeft className="h-4 w-4" />
-              <span>Back to Blog</span>
-            </Link>
-            <Link to="/landing" className="text-xl font-bold text-foreground">
-              Pro Pointers Plus
-            </Link>
-            <div className="w-24" />
-          </div>
-        </header>
+        {headerBar}
 
-        <main className="flex-1 container mx-auto px-4 py-12">
-          <article className="max-w-3xl mx-auto">
+        <main className="flex-1 container mx-auto px-4 py-16">
+          <article className="max-w-3xl mx-auto glass rounded-2xl p-8 md:p-12">
             <header className="mb-8">
-              <h1 className="text-4xl font-bold text-foreground mb-4">{post.title}</h1>
+              <h1 className="text-3xl md:text-4xl font-bold font-heading text-foreground mb-4 tracking-[-0.02em]">{post.title}</h1>
               <div className="flex items-center gap-2 text-muted-foreground">
                 <Calendar className="h-4 w-4" />
                 <time dateTime={post.published_at || post.created_at}>
@@ -123,9 +118,9 @@ const BlogPost = () => {
               </div>
             </header>
 
-            <div className="prose prose-lg dark:prose-invert max-w-none">
+            <div className="prose prose-lg prose-invert max-w-none">
               {post.content.split('\n').map((paragraph, index) => (
-                paragraph.trim() && <p key={index} className="mb-4 text-foreground/90 leading-relaxed">{paragraph}</p>
+                paragraph.trim() && <p key={index} className="mb-4 text-foreground/85 leading-relaxed">{paragraph}</p>
               ))}
             </div>
           </article>
