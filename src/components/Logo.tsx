@@ -21,22 +21,33 @@ export const Logo = ({ className = "", size = "md" }: LogoProps) => {
       xmlns="http://www.w3.org/2000/svg"
       className={className}
     >
-      {/* Hexagon background */}
-      <polygon
-        points="50,2 93,27 93,73 50,98 7,73 7,27"
-        fill="hsl(160 84% 39%)"
+      {/* Abstract geometric mark — angular P³ monogram */}
+      <rect x="8" y="8" width="84" height="84" rx="20" fill="rgba(16,185,129,0.12)" />
+      
+      {/* Stylized P shape */}
+      <path
+        d="M30 78V22h20c12 0 22 8 22 18s-10 18-22 18H42"
+        stroke="hsl(160, 84%, 39%)"
+        strokeWidth="6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
       />
       
-      {/* Inner circle - lighter green */}
-      <circle cx="50" cy="50" r="32" fill="hsl(150 60% 65%)" />
-      
-      {/* Tennis ball seams */}
-      <g stroke="hsl(160 90% 20%)" strokeWidth="4" strokeLinecap="round" fill="none">
-        {/* Left curve */}
-        <path d="M 28 35 Q 38 50 28 65" />
-        {/* Right curve */}
-        <path d="M 72 35 Q 62 50 72 65" />
-      </g>
+      {/* Superscript ³ */}
+      <text
+        x="72"
+        y="32"
+        fill="hsl(160, 84%, 39%)"
+        fontSize="20"
+        fontWeight="700"
+        fontFamily="Satoshi, sans-serif"
+      >
+        ³
+      </text>
+
+      {/* Accent dot */}
+      <circle cx="30" cy="78" r="4" fill="hsl(160, 84%, 39%)" />
     </svg>
   );
 };
