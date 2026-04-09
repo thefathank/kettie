@@ -16,9 +16,6 @@ import coachPrivate from "@/assets/coach-private.png";
 import coachSchool from "@/assets/coach-school.png";
 import coachClub from "@/assets/coach-club.png";
 import coachAcademy from "@/assets/coach-academy.png";
-import mockupDashboard from "@/assets/mockup-dashboard.png";
-import mockupSchedule from "@/assets/mockup-schedule.png";
-import mockupLessons from "@/assets/mockup-lessons.png";
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -32,7 +29,7 @@ const Landing = () => {
   const [sessionsPerWeek, setSessionsPerWeek] = useState(15);
 
   const calcData = useMemo(() => {
-    const manualMinPerSession = 18; // scheduling, notes, follow-up, payment tracking
+    const manualMinPerSession = 18;
     const appMinPerSession = 4;
     const manualHrsWeek = (sessionsPerWeek * manualMinPerSession) / 60;
     const appHrsWeek = (sessionsPerWeek * appMinPerSession) / 60;
@@ -95,9 +92,88 @@ const Landing = () => {
   ];
 
   const scenes = [
-    { title: "Your command center", bullets: ["At-a-glance stats for sessions, revenue, and clients", "Today's schedule front and center", "Quick actions to add clients and sessions"], img: mockupDashboard, alt: "Dashboard" },
-    { title: "Scheduling, simplified", bullets: ["Calendar view with drag-and-drop sessions", "Recurring session support", "Client self-booking via Cal.com integration"], img: mockupSchedule, alt: "Schedule" },
-    { title: "Lessons that stick", bullets: ["Reusable lesson templates with exercises", "Assign plans to clients after each session", "Email lesson plans directly to clients"], img: mockupLessons, alt: "Lessons" },
+    {
+      title: "Your command center",
+      bullets: ["At-a-glance stats for sessions, revenue, and clients", "Today's schedule front and center", "Quick actions to add clients and sessions"],
+      alt: "Dashboard",
+      mockup: (
+        <div className="space-y-3">
+          <div className="grid grid-cols-3 gap-2">
+            {[{ label: "Clients", val: "24" }, { label: "Sessions", val: "128" }, { label: "Revenue", val: "$4,200" }].map(s => (
+              <div key={s.label} className="glass rounded-xl p-3 text-center">
+                <div className="text-lg font-bold font-mono text-foreground">{s.val}</div>
+                <div className="text-[10px] text-muted-foreground">{s.label}</div>
+              </div>
+            ))}
+          </div>
+          <div className="glass rounded-xl p-3">
+            <div className="text-xs text-muted-foreground mb-2">Today's Schedule</div>
+            {["9:00 AM — Alex M.", "10:30 AM — Sarah K.", "2:00 PM — Group"].map(r => (
+              <div key={r} className="flex items-center gap-2 py-1.5 border-b border-white/[0.04] last:border-0">
+                <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                <span className="text-xs text-foreground/80">{r}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      ),
+    },
+    {
+      title: "Scheduling, simplified",
+      bullets: ["Calendar view with drag-and-drop sessions", "Recurring session support", "Client self-booking via Cal.com integration"],
+      alt: "Schedule",
+      mockup: (
+        <div className="space-y-3">
+          <div className="grid grid-cols-7 gap-1">
+            {["M","T","W","T","F","S","S"].map((d,i) => (
+              <div key={i} className="text-center text-[10px] text-muted-foreground/60 pb-1">{d}</div>
+            ))}
+            {Array.from({length: 14}, (_,i) => (
+              <div key={i} className={`aspect-square rounded-md text-[10px] flex items-center justify-center ${i === 2 || i === 5 || i === 9 ? 'bg-primary/20 text-primary border border-primary/30' : 'bg-white/[0.03] text-muted-foreground/50'}`}>
+                {i + 1}
+              </div>
+            ))}
+          </div>
+          <div className="glass rounded-xl p-3 space-y-2">
+            {[{ time: "9:00", name: "Alex M.", type: "Private" }, { time: "11:00", name: "Group A", type: "Group" }].map(s => (
+              <div key={s.time} className="flex items-center justify-between py-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-mono text-primary">{s.time}</span>
+                  <span className="text-xs text-foreground/80">{s.name}</span>
+                </div>
+                <span className="text-[10px] text-muted-foreground bg-white/[0.06] px-2 py-0.5 rounded-full">{s.type}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      ),
+    },
+    {
+      title: "Lessons that stick",
+      bullets: ["Reusable lesson templates with exercises", "Assign plans to clients after each session", "Email lesson plans directly to clients"],
+      alt: "Lessons",
+      mockup: (
+        <div className="space-y-3">
+          <div className="glass rounded-xl p-3">
+            <div className="text-xs font-semibold text-foreground mb-2">Forehand Mechanics</div>
+            <div className="space-y-1.5">
+              {["Grip adjustment drill — 10 min", "Shadow swings — 15 min", "Cross-court rally — 20 min"].map(ex => (
+                <div key={ex} className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded border border-primary/40 flex items-center justify-center">
+                    <div className="w-1.5 h-1.5 rounded-sm bg-primary" />
+                  </div>
+                  <span className="text-[11px] text-muted-foreground">{ex}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="glass rounded-xl p-3">
+            <div className="text-xs font-semibold text-foreground mb-1">Serve & Return</div>
+            <div className="text-[10px] text-muted-foreground">4 exercises · 45 min</div>
+          </div>
+        </div>
+      ),
+    },
   ];
 
   const coachTypes = [
@@ -123,7 +199,6 @@ const Landing = () => {
             <Logo size="sm" />
             <span className="text-xl font-bold font-heading text-foreground hidden sm:inline">Pro Pointers Plus</span>
           </div>
-          {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-6">
             <a href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-150">Features</a>
             <button onClick={() => navigate('/pricing')} className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-150">Pricing</button>
@@ -131,12 +206,10 @@ const Landing = () => {
             <Button onClick={() => navigate('/auth')} variant="ghost" size="sm">Sign In</Button>
             <Button onClick={() => navigate('/pricing')} size="sm" className="btn-pulse-glow">Get Started</Button>
           </div>
-          {/* Mobile hamburger */}
           <button className="md:hidden p-2 text-foreground" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
             {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
-        {/* Mobile menu */}
         {mobileMenuOpen && (
           <div className="md:hidden bg-black/95 backdrop-blur-xl border-t border-white/[0.06] px-4 py-6 space-y-4">
             <a href="#features" className="block text-sm text-muted-foreground" onClick={() => setMobileMenuOpen(false)}>Features</a>
@@ -169,35 +242,30 @@ const Landing = () => {
       </Dialog>
 
       {/* ===== HERO ===== */}
-      <section ref={heroRef} className="relative min-h-[100vh] flex flex-col items-center overflow-hidden pt-32 md:pt-40">
-        {/* Subtle background — no mesh, just a faint radial glow */}
+      <section ref={heroRef} onMouseMove={handleMouseMove} className="relative min-h-[100vh] flex flex-col items-center overflow-hidden pt-28 md:pt-36">
+        {/* Subtle background glow */}
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-[20%] left-1/2 -translate-x-1/2 w-[800px] h-[500px] rounded-full bg-primary/[0.04] blur-[150px]" />
+          <div className="absolute top-[15%] left-1/2 -translate-x-1/2 w-[900px] h-[600px] rounded-full bg-primary/[0.05] blur-[180px]" />
         </div>
 
-        {/* Decorative arc lines behind the mockup */}
-        <svg className="absolute bottom-[10%] left-1/2 -translate-x-1/2 w-[900px] h-[500px] pointer-events-none opacity-20" viewBox="0 0 900 500" fill="none">
-          <ellipse cx="450" cy="500" rx="400" ry="350" stroke="hsl(var(--primary))" strokeWidth="1" />
-          <ellipse cx="450" cy="500" rx="320" ry="280" stroke="hsl(var(--primary) / 0.5)" strokeWidth="0.5" />
-          <ellipse cx="550" cy="520" rx="350" ry="300" stroke="hsl(var(--destructive) / 0.3)" strokeWidth="0.5" />
-        </svg>
-
-        {/* Centered text */}
+        {/* Centered text — tighter, no italic */}
         <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-5xl md:text-6xl lg:text-[76px] font-black font-heading text-foreground tracking-[-0.03em] leading-[1] mb-6 italic"
+            className="text-5xl md:text-7xl lg:text-[80px] font-black font-heading text-foreground tracking-[-0.04em] leading-[0.95] mb-5"
           >
-            Do what you love coaching.<br />We'll handle the rest.
+            Do what you love coaching.
+            <br />
+            <span className="text-muted-foreground">We handle the rest.</span>
           </motion.h1>
 
           <motion.p
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-lg md:text-xl text-muted-foreground mb-10 font-medium"
+            className="text-lg md:text-xl text-muted-foreground mb-8 font-medium tracking-[-0.01em]"
           >
             Modern coaching management for tennis pros and academies.
           </motion.p>
@@ -206,56 +274,131 @@ const Landing = () => {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
+            className="flex items-center justify-center gap-4"
           >
             <Button
               onClick={() => navigate('/pricing')}
               size="lg"
-              className="bg-foreground text-background hover:bg-foreground/90 rounded-full px-8 text-sm font-semibold uppercase tracking-wider h-12"
+              className="btn-pulse-glow px-8 h-12 text-sm font-semibold"
             >
-              <ArrowRight className="mr-2 h-4 w-4" /> Get Started Free
+              Get Started Free <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+            <Button
+              onClick={() => navigate('/demo/dashboard')}
+              variant="outline"
+              size="lg"
+              className="px-8 h-12 text-sm font-semibold"
+            >
+              <Play className="mr-2 h-4 w-4" /> See Demo
             </Button>
           </motion.div>
         </div>
 
-        {/* Large mockup — centered, bottom-aligned, bleeding below fold */}
+        {/* ===== FLOATING GLASS CARDS — 3D dashboard exploded view ===== */}
         <motion.div
-          initial={{ opacity: 0, y: 60 }}
+          initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, delay: 0.4 }}
           className="relative z-10 w-full max-w-5xl mx-auto mt-16 px-4"
-          onMouseMove={handleMouseMove}
+          style={{ perspective: "1200px" }}
         >
-          <div style={{ perspective: "1200px" }}>
+          <div
+            className="relative h-[340px] md:h-[420px]"
+            style={{
+              transform: `rotateY(${mousePos.x * 3}deg) rotateX(${-mousePos.y * 2}deg)`,
+              transformStyle: "preserve-3d",
+              transition: "transform 0.15s ease-out",
+            }}
+          >
+            {/* Card 1 — Stats row, front-left */}
             <div
-              className="relative rounded-xl overflow-hidden shadow-[0_40px_120px_rgba(0,0,0,0.6)] border border-white/[0.08]"
-              style={{
-                transform: `rotateY(${mousePos.x * 4}deg) rotateX(${-mousePos.y * 3}deg)`,
-                transformStyle: "preserve-3d",
-                transition: "transform 0.1s ease-out",
-              }}
+              className="absolute left-[5%] top-[10%] w-[220px] glass rounded-2xl p-4 shadow-[0_20px_60px_rgba(0,0,0,0.4)]"
+              style={{ transform: "translate3d(0, 0, 40px)" }}
             >
-              {/* Browser chrome */}
-              <div className="flex items-center gap-1.5 px-4 py-2.5 bg-[#1a1a1a]">
-                <div className="w-3 h-3 rounded-full bg-[#ff5f57]" />
-                <div className="w-3 h-3 rounded-full bg-[#febc2e]" />
-                <div className="w-3 h-3 rounded-full bg-[#28c840]" />
-                <div className="flex-1 mx-6 h-6 bg-white/[0.06] rounded-md" />
+              <div className="text-xs text-muted-foreground mb-3">This Month</div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <div className="text-xl font-bold font-mono text-foreground">24</div>
+                  <div className="text-[10px] text-muted-foreground">Clients</div>
+                </div>
+                <div>
+                  <div className="text-xl font-bold font-mono text-primary">128</div>
+                  <div className="text-[10px] text-muted-foreground">Sessions</div>
+                </div>
               </div>
-              <img src={mockupDashboard} alt="Pro Pointers Plus Dashboard" className="w-full block" loading="eager" />
+            </div>
+
+            {/* Card 2 — Revenue chart, center-back */}
+            <div
+              className="absolute left-1/2 -translate-x-1/2 top-[0%] w-[280px] glass rounded-2xl p-4 shadow-[0_30px_80px_rgba(0,0,0,0.5)]"
+              style={{ transform: "translate3d(-50%, 0, 80px)" }}
+            >
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-xs text-muted-foreground">Revenue</span>
+                <span className="text-sm font-bold font-mono text-primary">$4,200</span>
+              </div>
+              <div className="flex items-end gap-1 h-16">
+                {[35, 50, 42, 65, 55, 78, 60, 85, 72, 90, 68, 95].map((h, i) => (
+                  <div key={i} className="flex-1 rounded-sm bg-primary/40" style={{ height: `${h}%` }} />
+                ))}
+              </div>
+            </div>
+
+            {/* Card 3 — Schedule, front-right */}
+            <div
+              className="absolute right-[5%] top-[15%] w-[200px] glass rounded-2xl p-4 shadow-[0_20px_60px_rgba(0,0,0,0.4)]"
+              style={{ transform: "translate3d(0, 0, 30px)" }}
+            >
+              <div className="text-xs text-muted-foreground mb-2">Today</div>
+              {["9:00 — Alex M.", "10:30 — Sarah K.", "2:00 — Group"].map(r => (
+                <div key={r} className="flex items-center gap-2 py-1.5 border-b border-white/[0.04] last:border-0">
+                  <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                  <span className="text-[11px] text-foreground/80 font-mono">{r}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Card 4 — Lesson plan snippet, bottom-left */}
+            <div
+              className="absolute left-[15%] bottom-[5%] w-[200px] glass rounded-2xl p-4 shadow-[0_20px_60px_rgba(0,0,0,0.3)]"
+              style={{ transform: "translate3d(0, 0, 20px)" }}
+            >
+              <div className="text-xs font-semibold text-foreground mb-2">Forehand Drill</div>
+              {["Grip check — 5 min", "Shadow swings — 10 min", "Rally — 15 min"].map(ex => (
+                <div key={ex} className="flex items-center gap-2 py-1">
+                  <div className="w-2.5 h-2.5 rounded border border-primary/40 flex items-center justify-center">
+                    <div className="w-1 h-1 rounded-sm bg-primary" />
+                  </div>
+                  <span className="text-[10px] text-muted-foreground">{ex}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Card 5 — Payment badge, bottom-right */}
+            <div
+              className="absolute right-[12%] bottom-[10%] w-[180px] glass rounded-2xl p-4 shadow-[0_20px_60px_rgba(0,0,0,0.3)]"
+              style={{ transform: "translate3d(0, 0, 50px)" }}
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <CreditCard className="w-3.5 h-3.5 text-primary" />
+                <span className="text-xs text-muted-foreground">Payments</span>
+              </div>
+              <div className="text-lg font-bold font-mono text-foreground">$1,850</div>
+              <div className="text-[10px] text-primary">+12% this month</div>
             </div>
           </div>
         </motion.div>
       </section>
 
       {/* ===== BENTO FEATURE GRID ===== */}
-      <section id="features" className="py-28">
+      <section id="features" className="py-20">
         <div className="container mx-auto px-4 max-w-6xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.5 }}
-            className="mb-16"
+            className="mb-14"
           >
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-black font-heading text-foreground tracking-[-0.02em] mb-4">
               Everything you need.
@@ -284,19 +427,19 @@ const Landing = () => {
       </section>
 
       {/* ===== PRODUCT IN ACTION — SCROLL SCENES ===== */}
-      <section className="py-28 border-t border-white/[0.04]">
+      <section className="py-20 border-t border-white/[0.04]">
         <div className="container mx-auto px-4 max-w-6xl">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="text-4xl md:text-5xl lg:text-6xl font-black font-heading text-foreground tracking-[-0.02em] mb-20"
+            className="text-4xl md:text-5xl lg:text-6xl font-black font-heading text-foreground tracking-[-0.02em] mb-16"
           >
             See it in action.
           </motion.h2>
 
-          <div className="space-y-32">
+          <div className="space-y-24">
             {scenes.map((scene, i) => (
               <motion.div
                 key={scene.title}
@@ -304,7 +447,7 @@ const Landing = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-80px" }}
                 transition={{ duration: 0.6 }}
-                className={`grid lg:grid-cols-2 gap-12 items-center ${i % 2 === 1 ? "direction-rtl" : ""}`}
+                className={`grid lg:grid-cols-2 gap-12 items-center`}
               >
                 <div className={i % 2 === 1 ? "lg:order-2" : ""}>
                   <h3 className="text-3xl md:text-4xl font-bold font-heading text-foreground mb-6 tracking-[-0.01em]">{scene.title}</h3>
@@ -318,8 +461,17 @@ const Landing = () => {
                   </ul>
                 </div>
                 <div className={i % 2 === 1 ? "lg:order-1" : ""}>
-                  <div className="glass rounded-2xl p-1.5 shadow-[0_20px_60px_rgba(0,0,0,0.4)]">
-                    <img src={scene.img} alt={scene.alt} className="rounded-xl w-full" loading="lazy" />
+                  {/* CSS mockup frame */}
+                  <div className="glass rounded-2xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.4)]">
+                    <div className="flex items-center gap-1.5 px-3 py-2 bg-white/[0.03] border-b border-white/[0.04]">
+                      <div className="w-2 h-2 rounded-full bg-white/10" />
+                      <div className="w-2 h-2 rounded-full bg-white/10" />
+                      <div className="w-2 h-2 rounded-full bg-white/10" />
+                      <div className="flex-1 mx-4 h-4 bg-white/[0.04] rounded-md" />
+                    </div>
+                    <div className="p-4">
+                      {scene.mockup}
+                    </div>
                   </div>
                 </div>
               </motion.div>
@@ -329,14 +481,14 @@ const Landing = () => {
       </section>
 
       {/* ===== WHO IT'S FOR ===== */}
-      <section className="py-28 border-t border-white/[0.04]">
+      <section className="py-20 border-t border-white/[0.04]">
         <div className="container mx-auto px-4 max-w-6xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="mb-16"
+            className="mb-14"
           >
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-black font-heading text-foreground tracking-[-0.02em]">
               Built for every type of coach.
@@ -379,10 +531,9 @@ const Landing = () => {
       </section>
 
       {/* ===== SAVE TIME CALCULATOR ===== */}
-      <section className="py-28 border-t border-white/[0.04]">
+      <section className="py-20 border-t border-white/[0.04]">
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
-            {/* Left — copy + slider */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -414,7 +565,6 @@ const Landing = () => {
               </div>
             </motion.div>
 
-            {/* Right — visual bars + savings */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -422,7 +572,6 @@ const Landing = () => {
               transition={{ duration: 0.5, delay: 0.1 }}
               className="flex items-end gap-8 justify-center"
             >
-              {/* Manual bar */}
               <div className="flex flex-col items-center gap-3">
                 <span className="text-2xl md:text-3xl font-bold font-mono text-foreground">{calcData.manualHrsWeek}h</span>
                 <span className="text-xs text-muted-foreground">admin / week</span>
@@ -435,7 +584,6 @@ const Landing = () => {
                 <span className="text-xs text-muted-foreground/60">Manual</span>
               </div>
 
-              {/* App bar */}
               <div className="flex flex-col items-center gap-3">
                 <span className="text-2xl md:text-3xl font-bold font-mono text-primary">{calcData.appHrsWeek}h</span>
                 <span className="text-xs text-muted-foreground">admin / week</span>
@@ -448,7 +596,6 @@ const Landing = () => {
                 <span className="text-xs text-primary">With P³</span>
               </div>
 
-              {/* Annual savings box */}
               <div className="flex flex-col items-center gap-3">
                 <div className="glass rounded-2xl border-primary/30 p-6 md:p-8 text-center">
                   <div className="text-3xl md:text-4xl font-bold font-mono text-primary mb-1">{calcData.savedHrsYear}h</div>
@@ -462,7 +609,7 @@ const Landing = () => {
       </section>
 
       {/* ===== TRUST BAR ===== */}
-      <section className="py-16 border-t border-b border-white/[0.04] bg-white/[0.02]">
+      <section className="py-14 border-t border-b border-white/[0.04] bg-white/[0.02]">
         <div className="container mx-auto px-4 max-w-5xl">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((s, i) => (
@@ -484,9 +631,9 @@ const Landing = () => {
       </section>
 
       {/* ===== CTA / CLOSING ===== */}
-      <section className="py-32 relative overflow-hidden">
+      <section className="py-28 relative overflow-hidden">
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="w-[500px] h-[500px] rounded-full bg-primary/8 blur-[150px]" />
+          <div className="w-[500px] h-[500px] rounded-full bg-primary/[0.08] blur-[150px]" />
         </div>
         <div className="relative z-10 container mx-auto px-4 text-center max-w-3xl">
           <motion.h2
