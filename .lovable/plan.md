@@ -1,41 +1,44 @@
 
 
-## Landing Page Hero & Visual Overhaul
+## Replace "See It In Action" with Linear-Style Interactive Dashboard Prototype
 
-### Problem
-The current hero has overly italic fonts, awkward spacing, and uses old mockup screenshots that don't match the new dark glassmorphic design system. The user wants futuristic graphics and/or actual views of the current dashboard.
+### What changes
+Replace the current scroll-scene section (lines 429-481 in `Landing.tsx`) with a single full-width interactive prototype that mimics Linear's homepage approach: a live, functional-looking app UI embedded directly in the page, not separate mockup cards.
 
-### Plan
+### Design approach — Linear-style embedded app
 
-**Step 1: Fix hero typography and spacing**
-- Remove `italic` from the hero heading — use Satoshi black, upright, with tighter tracking (`-0.04em`)
-- Increase heading size slightly (`text-[80px]` on desktop) with better line-height (`leading-[0.95]`)
-- Tighten vertical spacing: reduce gap between heading → subheading → CTAs
-- Make subheading slightly larger (`text-xl`) with better letter-spacing
-- Add a second CTA button ("See Demo" ghost/outline) alongside the primary
-- Remove the decorative SVG arc lines — they add clutter
+Instead of three alternating text+mockup scenes, build one large glassmorphic "app window" that visitors can interact with:
 
-**Step 2: Replace mockup screenshots with futuristic abstract graphics**
-- Remove the static mockup-dashboard.png from the hero entirely
-- Replace with a futuristic abstract graphic composition: a set of glassmorphic floating UI cards/panels arranged in a 3D perspective layout
-- These cards will be pure CSS/HTML — not images — containing fake dashboard data (stat numbers, mini chart bars, schedule rows) styled with the actual design system
-- Cards float at different depths with the existing mouse-parallax effect, creating a "dashboard exploded view"
-- Each card gets a subtle emerald glow and glass treatment
-- This approach: no external images needed, matches the live design system, looks futuristic
+**Layout**: Full-width glass container with:
+- A **sidebar** on the left (~200px) with nav items (Dashboard, Clients, Schedule, Lessons, Payments) — each clickable
+- A **main content area** on the right that swaps content based on which sidebar item is selected
+- A macOS-style title bar with traffic light dots at the top
 
-**Step 3: Update the "Product in Action" scroll scenes**
-- Replace the three mockup images (`mockup-dashboard.png`, `mockup-schedule.png`, `mockup-lessons.png`) with browser-framed screenshots of the actual current app
-- Take fresh screenshots of the Dashboard, Schedule, and Lessons pages using the browser tool, then save them as new assets
-- Alternatively, build inline CSS mockup frames that mirror the actual UI using the glassmorphic cards, stat cards, and table styles already in the design system — no images needed
+**Interactive behavior**:
+- `useState` tracks the active "view" (default: Dashboard)
+- Clicking sidebar items swaps the main content panel with a smooth crossfade
+- Each view renders a dense, data-rich mockup matching the actual app's design system
 
-**Step 4: Tighten section spacing globally**
-- Reduce excessive padding between sections (currently `py-28` everywhere)
-- Use `py-20` for standard sections, `py-28` only for the final CTA
-- Tighten inner element spacing for a denser, more confident layout
+**Five views**:
+1. **Dashboard** — stat cards grid (Clients: 24, Sessions: 128, Revenue: $4,200, Growth: +18%), mini schedule list, mini revenue chart bars
+2. **Clients** — table-style list with 5 fake clients (name, email, sessions count, status badge)
+3. **Schedule** — mini calendar grid + today's sessions list
+4. **Lessons** — lesson template cards with exercise lists and checkboxes
+5. **Payments** — payment table rows with amounts in mono, status pills (Paid/Pending)
 
-### Technical Details
-- **Files modified**: `src/pages/Landing.tsx` (primary), possibly `src/index.css` for any new utility classes
-- **No new dependencies** — all graphics are CSS/HTML components
-- **No functionality changes** — waitlist form, navigation, routing all untouched
-- The floating UI cards in the hero use `transform: translate3d()` driven by the existing `mousePos` state for parallax depth
+**Visual style**:
+- The entire prototype sits in a glass card with `shadow-[0_40px_100px_rgba(0,0,0,0.5)]` and a subtle emerald glow underneath
+- Sidebar items highlight with emerald background when active
+- Content transitions use framer-motion `AnimatePresence` with opacity+translateY
+- Section heading above: "See it in action." in the existing massive Satoshi style
+- Subtle gradient glow behind the entire prototype container
+
+### Technical details
+- **File modified**: `src/pages/Landing.tsx` only
+- Remove the `scenes` array and the scroll-scenes section (lines 94-177 and 429-481)
+- Add a new `InteractivePrototype` component inline (or as a const within the Landing component)
+- New state: `const [activeView, setActiveView] = useState<string>("dashboard")`
+- No new dependencies — uses existing framer-motion, lucide icons, and Tailwind
+- No functionality changes — all existing waitlist, nav, routing untouched
+- Mobile: sidebar collapses to a horizontal tab bar above the content area
 
