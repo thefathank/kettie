@@ -1,35 +1,46 @@
 
 
-## Problem Summary
+## Switch from Resend to Lovable's Built-in Email System
 
-There are two misconfigurations preventing the API keys from working:
+### Problem
+The project uses Resend for two email-sending edge functions (`send-client-email` and `invite-coach`), but the Resend domain `mail.propointersplus.com` is registered on the original project owner's account and can't be verified on yours.
 
-1. **Resend secret name mismatch** — Edge functions reference `RESEND_API_KEY` but the stored secret is `ResendKey`
-2. **PostHog keys stored in wrong location** — Frontend code needs build-time env vars (`VITE_POSTHOG_KEY`, `VITE_POSTHOG_HOST`), but they're stored as runtime secrets which are only accessible to edge functions
+### Plan
 
-## Plan
+**Step 1: Set up an email domain**
+No email domain is configured yet. You'll need to set up a sender domain through the email setup dialog. This requires adding DNS records at your domain registrar.
 
-### Step 1: Fix Resend API key name
+**Step 2: Set up email infrastructure**
+Create the database tables, queues, and cron job needed for Lovable's email system.
 
-Add a new runtime secret named `RESEND_API_KEY` with the same value as your current `ResendKey` secret. This will make it available to both `send-client-email` and `invite-coach` edge functions.
+**Step 3: Scaffold transactional email templates**
+Create three email templates matching the current functionality:
+- **Progress note** — sent when a coach shares a note with a client
+- **Training video** — sent when a coach shares a video
+- **Lesson plan** — sent when a coach shares a lesson plan
+- **Coach invitation** — sent when an admin invites a coach to an academy
 
-Alternatively, I can update both edge functions to use `Deno.env.get("ResendKey")` instead — this avoids creating a duplicate secret.
+**Step 4: Update edge functions**
+- Rewrite `send-client-email` to use `send-transactional-email` instead of Resend API calls, OR remove it entirely and call `send-transactional-email` directly from the frontend
+- Rewrite `invite-coach` to remove the Resend SDK import and use `send-transactional-email` instead
+- Remove all Resend imports and references
 
-**Recommendation:** Update the edge functions to use `ResendKey` since that's what's already stored.
+**Step 5: Update frontend call sites**
+Update the 4 files that invoke `send-client-email`:
+- `src/components/NotesList.tsx`
+- `src/components/VideosList.tsx`
+- `src/components/LessonPlansList.tsx`
+- `src/pages/Lessons.tsx`
 
-### Step 2: Fix PostHog configuration
+These will call `send-transactional-email` directly with the appropriate template name and data.
 
-`VITE_POSTHOG_KEY` and `VITE_POSTHOG_HOST` are **build-time** variables — they cannot be managed by me or stored as runtime secrets. You need to:
+**Step 6: Create unsubscribe page**
+Add a branded unsubscribe page as required by the email system.
 
-1. Go to **Workspace Settings → Build Secrets** in the Lovable UI
-2. Add `VITE_POSTHOG_KEY` with your PostHog project API key
-3. Add `VITE_POSTHOG_HOST` with your PostHog host URL (typically `https://us.i.posthog.com` or `https://eu.i.posthog.com`)
+**Step 7: Deploy and test**
+Deploy all updated edge functions and verify email sending works.
 
-This is a manual step that only you can do.
-
-## Technical Details
-
-- **Files to modify:** `supabase/functions/send-client-email/index.ts` and `supabase/functions/invite-coach/index.ts` — change `RESEND_API_KEY` → `ResendKey`
-- **Redeploy:** Both edge functions after the change
-- **No code changes needed for PostHog** — the code is correct, it just needs the build secrets configured
+### What You'll Need to Do
+- Set up your email domain when prompted (add DNS records at your domain registrar)
+- Wait for DNS verification (can take up to 72 hours, but often faster)
 
