@@ -344,8 +344,8 @@ const Academy = () => {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold flex items-center gap-2">
-              <Building2 className="w-8 h-8 text-amber-500" />
+            <h1 className="text-3xl font-bold font-heading tracking-tight flex items-center gap-2">
+              <Building2 className="w-8 h-8 text-accent" />
               {academy.name}
             </h1>
             <p className="text-muted-foreground mt-1">
@@ -405,7 +405,7 @@ const Academy = () => {
                 <Users className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stats.coachCount}</div>
+                <div className="text-2xl font-bold font-mono">{stats.coachCount}</div>
               </CardContent>
             </Card>
             <Card>
@@ -414,7 +414,7 @@ const Academy = () => {
                 <Users className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stats.totalClients}</div>
+                <div className="text-2xl font-bold font-mono">{stats.totalClients}</div>
               </CardContent>
             </Card>
             <Card>
@@ -423,7 +423,7 @@ const Academy = () => {
                 <Calendar className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stats.totalSessions}</div>
+                <div className="text-2xl font-bold font-mono">{stats.totalSessions}</div>
               </CardContent>
             </Card>
             <Card>
@@ -432,7 +432,7 @@ const Academy = () => {
                 <DollarSign className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">${stats.totalRevenue.toLocaleString()}</div>
+                <div className="text-2xl font-bold font-mono">${stats.totalRevenue.toLocaleString()}</div>
               </CardContent>
             </Card>
           </div>
