@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import {
   Calendar, Users, CreditCard, BookOpen, Video, Building2, BarChart3,
-  ArrowRight, Play, ChevronRight, Zap, Shield, Clock, Menu, X
+  ArrowRight, Play, ChevronRight, Zap, Shield, Clock, Menu, X,
+  LayoutDashboard, DollarSign, TrendingUp, CheckCircle2
 } from "lucide-react";
 import { Footer } from "@/components/Footer";
 import { Logo } from "@/components/Logo";
@@ -91,90 +92,9 @@ const Landing = () => {
     { icon: BarChart3, title: "Analytics", desc: "Revenue, sessions, and client growth at a glance.", span: "" },
   ];
 
-  const scenes = [
-    {
-      title: "Your command center",
-      bullets: ["At-a-glance stats for sessions, revenue, and clients", "Today's schedule front and center", "Quick actions to add clients and sessions"],
-      alt: "Dashboard",
-      mockup: (
-        <div className="space-y-3">
-          <div className="grid grid-cols-3 gap-2">
-            {[{ label: "Clients", val: "24" }, { label: "Sessions", val: "128" }, { label: "Revenue", val: "$4,200" }].map(s => (
-              <div key={s.label} className="glass rounded-xl p-3 text-center">
-                <div className="text-lg font-bold font-mono text-foreground">{s.val}</div>
-                <div className="text-[10px] text-muted-foreground">{s.label}</div>
-              </div>
-            ))}
-          </div>
-          <div className="glass rounded-xl p-3">
-            <div className="text-xs text-muted-foreground mb-2">Today's Schedule</div>
-            {["9:00 AM — Alex M.", "10:30 AM — Sarah K.", "2:00 PM — Group"].map(r => (
-              <div key={r} className="flex items-center gap-2 py-1.5 border-b border-white/[0.04] last:border-0">
-                <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                <span className="text-xs text-foreground/80">{r}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      ),
-    },
-    {
-      title: "Scheduling, simplified",
-      bullets: ["Calendar view with drag-and-drop sessions", "Recurring session support", "Client self-booking via Cal.com integration"],
-      alt: "Schedule",
-      mockup: (
-        <div className="space-y-3">
-          <div className="grid grid-cols-7 gap-1">
-            {["M","T","W","T","F","S","S"].map((d,i) => (
-              <div key={i} className="text-center text-[10px] text-muted-foreground/60 pb-1">{d}</div>
-            ))}
-            {Array.from({length: 14}, (_,i) => (
-              <div key={i} className={`aspect-square rounded-md text-[10px] flex items-center justify-center ${i === 2 || i === 5 || i === 9 ? 'bg-primary/20 text-primary border border-primary/30' : 'bg-white/[0.03] text-muted-foreground/50'}`}>
-                {i + 1}
-              </div>
-            ))}
-          </div>
-          <div className="glass rounded-xl p-3 space-y-2">
-            {[{ time: "9:00", name: "Alex M.", type: "Private" }, { time: "11:00", name: "Group A", type: "Group" }].map(s => (
-              <div key={s.time} className="flex items-center justify-between py-1">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-mono text-primary">{s.time}</span>
-                  <span className="text-xs text-foreground/80">{s.name}</span>
-                </div>
-                <span className="text-[10px] text-muted-foreground bg-white/[0.06] px-2 py-0.5 rounded-full">{s.type}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      ),
-    },
-    {
-      title: "Lessons that stick",
-      bullets: ["Reusable lesson templates with exercises", "Assign plans to clients after each session", "Email lesson plans directly to clients"],
-      alt: "Lessons",
-      mockup: (
-        <div className="space-y-3">
-          <div className="glass rounded-xl p-3">
-            <div className="text-xs font-semibold text-foreground mb-2">Forehand Mechanics</div>
-            <div className="space-y-1.5">
-              {["Grip adjustment drill — 10 min", "Shadow swings — 15 min", "Cross-court rally — 20 min"].map(ex => (
-                <div key={ex} className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded border border-primary/40 flex items-center justify-center">
-                    <div className="w-1.5 h-1.5 rounded-sm bg-primary" />
-                  </div>
-                  <span className="text-[11px] text-muted-foreground">{ex}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="glass rounded-xl p-3">
-            <div className="text-xs font-semibold text-foreground mb-1">Serve & Return</div>
-            <div className="text-[10px] text-muted-foreground">4 exercises · 45 min</div>
-          </div>
-        </div>
-      ),
-    },
-  ];
+  const protoViews = ["Dashboard", "Clients", "Schedule", "Lessons", "Payments"] as const;
+  const protoIcons = { Dashboard: LayoutDashboard, Clients: Users, Schedule: Calendar, Lessons: BookOpen, Payments: CreditCard };
+  const [activeView, setActiveView] = useState<typeof protoViews[number]>("Dashboard");
 
   const coachTypes = [
     { img: coachPrivate, alt: "Private lesson coach", title: "Private Coach", desc: "One-on-one session management with personalized lesson plans." },
@@ -426,7 +346,7 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* ===== PRODUCT IN ACTION — SCROLL SCENES ===== */}
+      {/* ===== INTERACTIVE PROTOTYPE — LINEAR STYLE ===== */}
       <section className="py-20 border-t border-white/[0.04]">
         <div className="container mx-auto px-4 max-w-6xl">
           <motion.h2
@@ -439,44 +359,248 @@ const Landing = () => {
             See it in action.
           </motion.h2>
 
-          <div className="space-y-24">
-            {scenes.map((scene, i) => (
-              <motion.div
-                key={scene.title}
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-80px" }}
-                transition={{ duration: 0.6 }}
-                className={`grid lg:grid-cols-2 gap-12 items-center`}
-              >
-                <div className={i % 2 === 1 ? "lg:order-2" : ""}>
-                  <h3 className="text-3xl md:text-4xl font-bold font-heading text-foreground mb-6 tracking-[-0.01em]">{scene.title}</h3>
-                  <ul className="space-y-3">
-                    {scene.bullets.map((b) => (
-                      <li key={b} className="flex items-start gap-3">
-                        <ChevronRight className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
-                        <span className="text-muted-foreground">{b}</span>
-                      </li>
-                    ))}
-                  </ul>
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.7 }}
+            className="relative"
+          >
+            {/* Glow behind */}
+            <div className="absolute -inset-4 rounded-3xl bg-primary/[0.04] blur-[60px] pointer-events-none" />
+
+            <div className="relative glass rounded-2xl overflow-hidden shadow-[0_40px_100px_rgba(0,0,0,0.5)] border border-white/[0.08]">
+              {/* macOS title bar */}
+              <div className="flex items-center gap-1.5 px-4 py-2.5 bg-white/[0.03] border-b border-white/[0.06]">
+                <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f57]" />
+                <div className="w-2.5 h-2.5 rounded-full bg-[#febc2e]" />
+                <div className="w-2.5 h-2.5 rounded-full bg-[#28c840]" />
+                <div className="flex-1 mx-8 h-5 bg-white/[0.04] rounded-md flex items-center justify-center">
+                  <span className="text-[10px] text-muted-foreground/40 font-mono">app.propointersplus.com</span>
                 </div>
-                <div className={i % 2 === 1 ? "lg:order-1" : ""}>
-                  {/* CSS mockup frame */}
-                  <div className="glass rounded-2xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.4)]">
-                    <div className="flex items-center gap-1.5 px-3 py-2 bg-white/[0.03] border-b border-white/[0.04]">
-                      <div className="w-2 h-2 rounded-full bg-white/10" />
-                      <div className="w-2 h-2 rounded-full bg-white/10" />
-                      <div className="w-2 h-2 rounded-full bg-white/10" />
-                      <div className="flex-1 mx-4 h-4 bg-white/[0.04] rounded-md" />
+              </div>
+
+              <div className="flex min-h-[420px] md:min-h-[480px]">
+                {/* Sidebar — hidden on mobile, horizontal tabs instead */}
+                <div className="hidden md:flex flex-col w-[200px] border-r border-white/[0.06] bg-white/[0.02] p-3 gap-1">
+                  <div className="flex items-center gap-2 px-3 py-2 mb-3">
+                    <div className="w-6 h-6 rounded-lg bg-primary/20 flex items-center justify-center">
+                      <Zap className="w-3.5 h-3.5 text-primary" />
                     </div>
-                    <div className="p-4">
-                      {scene.mockup}
-                    </div>
+                    <span className="text-xs font-semibold text-foreground">Pro Pointers</span>
                   </div>
+                  {protoViews.map(view => {
+                    const Icon = protoIcons[view];
+                    return (
+                      <button
+                        key={view}
+                        onClick={() => setActiveView(view)}
+                        className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-all duration-150 text-left ${activeView === view ? 'bg-primary/15 text-primary' : 'text-muted-foreground hover:text-foreground hover:bg-white/[0.04]'}`}
+                      >
+                        <Icon className="w-4 h-4" />
+                        {view}
+                      </button>
+                    );
+                  })}
                 </div>
-              </motion.div>
-            ))}
-          </div>
+
+                {/* Mobile tab bar */}
+                <div className="md:hidden flex border-b border-white/[0.06] overflow-x-auto">
+                  {protoViews.map(view => {
+                    const Icon = protoIcons[view];
+                    return (
+                      <button
+                        key={view}
+                        onClick={() => setActiveView(view)}
+                        className={`flex items-center gap-1.5 px-4 py-3 text-xs font-medium whitespace-nowrap transition-all duration-150 border-b-2 ${activeView === view ? 'border-primary text-primary' : 'border-transparent text-muted-foreground'}`}
+                      >
+                        <Icon className="w-3.5 h-3.5" />
+                        {view}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Main content area */}
+                <div className="flex-1 p-5 md:p-6 overflow-hidden">
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={activeView}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      {activeView === "Dashboard" && (
+                        <div className="space-y-5">
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            {[
+                              { label: "Active Clients", val: "24", icon: Users, change: "+3 this month" },
+                              { label: "Sessions", val: "128", icon: Calendar, change: "+12 this week" },
+                              { label: "Revenue", val: "$4,200", icon: DollarSign, change: "+18% vs last" },
+                              { label: "Growth", val: "+18%", icon: TrendingUp, change: "steady trend" },
+                            ].map(s => (
+                              <div key={s.label} className="rounded-xl bg-white/[0.04] border border-white/[0.06] p-4">
+                                <div className="flex items-center justify-between mb-2">
+                                  <span className="text-[10px] text-muted-foreground uppercase tracking-wider">{s.label}</span>
+                                  <s.icon className="w-3.5 h-3.5 text-primary/60" />
+                                </div>
+                                <div className="text-xl font-bold font-mono text-foreground">{s.val}</div>
+                                <div className="text-[10px] text-primary mt-1">{s.change}</div>
+                              </div>
+                            ))}
+                          </div>
+                          <div className="grid md:grid-cols-2 gap-4">
+                            <div className="rounded-xl bg-white/[0.04] border border-white/[0.06] p-4">
+                              <div className="text-xs text-muted-foreground mb-3">Revenue (12 weeks)</div>
+                              <div className="flex items-end gap-1 h-24">
+                                {[35, 50, 42, 65, 55, 78, 60, 85, 72, 90, 68, 95].map((h, i) => (
+                                  <div key={i} className="flex-1 rounded-sm bg-primary/40 hover:bg-primary/60 transition-colors duration-150" style={{ height: `${h}%` }} />
+                                ))}
+                              </div>
+                            </div>
+                            <div className="rounded-xl bg-white/[0.04] border border-white/[0.06] p-4">
+                              <div className="text-xs text-muted-foreground mb-3">Today's Schedule</div>
+                              {["9:00 AM — Alex M. · Private", "10:30 AM — Sarah K. · Private", "1:00 PM — Group Session", "3:30 PM — James R. · Trial"].map(r => (
+                                <div key={r} className="flex items-center gap-2 py-2 border-b border-white/[0.04] last:border-0">
+                                  <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                                  <span className="text-xs text-foreground/80">{r}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {activeView === "Clients" && (
+                        <div className="rounded-xl bg-white/[0.04] border border-white/[0.06] overflow-hidden">
+                          <div className="grid grid-cols-[1fr_1fr_80px_80px] md:grid-cols-[1fr_1.5fr_80px_80px_100px] gap-4 px-4 py-3 border-b border-white/[0.06] text-[10px] text-muted-foreground uppercase tracking-wider">
+                            <span>Name</span>
+                            <span className="hidden md:block">Email</span>
+                            <span>Sessions</span>
+                            <span>Level</span>
+                            <span className="hidden md:block">Status</span>
+                          </div>
+                          {[
+                            { name: "Alex Martinez", email: "alex@email.com", sessions: 32, level: "Advanced", status: "Active" },
+                            { name: "Sarah Kim", email: "sarah@email.com", sessions: 18, level: "Intermediate", status: "Active" },
+                            { name: "James Rivera", email: "james@email.com", sessions: 5, level: "Beginner", status: "Trial" },
+                            { name: "Emma Chen", email: "emma@email.com", sessions: 24, level: "Advanced", status: "Active" },
+                            { name: "David Okoro", email: "david@email.com", sessions: 11, level: "Intermediate", status: "Paused" },
+                          ].map(c => (
+                            <div key={c.name} className="grid grid-cols-[1fr_1fr_80px_80px] md:grid-cols-[1fr_1.5fr_80px_80px_100px] gap-4 px-4 py-3 border-b border-white/[0.04] last:border-0 hover:bg-primary/[0.03] transition-colors duration-150">
+                              <span className="text-sm text-foreground font-medium">{c.name}</span>
+                              <span className="text-xs text-muted-foreground hidden md:block">{c.email}</span>
+                              <span className="text-xs font-mono text-foreground">{c.sessions}</span>
+                              <span className="text-xs text-muted-foreground">{c.level}</span>
+                              <span className={`text-[10px] px-2 py-0.5 rounded-full w-fit hidden md:block ${c.status === 'Active' ? 'bg-primary/15 text-primary' : c.status === 'Trial' ? 'bg-yellow-500/15 text-yellow-400' : 'bg-white/[0.06] text-muted-foreground'}`}>{c.status}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {activeView === "Schedule" && (
+                        <div className="space-y-4">
+                          <div className="grid grid-cols-7 gap-1.5">
+                            {["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map(d => (
+                              <div key={d} className="text-center text-[10px] text-muted-foreground/60 pb-1 font-medium">{d}</div>
+                            ))}
+                            {Array.from({length: 21}, (_,i) => {
+                              const hasSession = [2, 5, 7, 9, 12, 14, 16, 19].includes(i);
+                              const isToday = i === 9;
+                              return (
+                                <div key={i} className={`aspect-square rounded-lg text-[11px] flex items-center justify-center font-mono transition-all duration-150 ${isToday ? 'bg-primary text-primary-foreground font-bold ring-2 ring-primary/30' : hasSession ? 'bg-primary/15 text-primary border border-primary/20' : 'bg-white/[0.03] text-muted-foreground/50 hover:bg-white/[0.06]'}`}>
+                                  {i + 1}
+                                </div>
+                              );
+                            })}
+                          </div>
+                          <div className="rounded-xl bg-white/[0.04] border border-white/[0.06] p-4">
+                            <div className="text-xs text-muted-foreground mb-3">Wednesday, Jan 10</div>
+                            {[
+                              { time: "9:00", name: "Alex M.", type: "Private", dur: "60 min" },
+                              { time: "10:30", name: "Sarah K.", type: "Private", dur: "60 min" },
+                              { time: "1:00", name: "Group A", type: "Group", dur: "90 min" },
+                              { time: "3:30", name: "James R.", type: "Trial", dur: "30 min" },
+                            ].map(s => (
+                              <div key={s.time} className="flex items-center justify-between py-2.5 border-b border-white/[0.04] last:border-0">
+                                <div className="flex items-center gap-3">
+                                  <span className="text-xs font-mono text-primary w-12">{s.time}</span>
+                                  <span className="text-sm text-foreground">{s.name}</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-[10px] text-muted-foreground">{s.dur}</span>
+                                  <span className={`text-[10px] px-2 py-0.5 rounded-full ${s.type === 'Private' ? 'bg-primary/15 text-primary' : s.type === 'Group' ? 'bg-blue-500/15 text-blue-400' : 'bg-yellow-500/15 text-yellow-400'}`}>{s.type}</span>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {activeView === "Lessons" && (
+                        <div className="grid md:grid-cols-2 gap-4">
+                          {[
+                            { title: "Forehand Mechanics", exercises: ["Grip adjustment drill — 10 min", "Shadow swings — 15 min", "Cross-court rally — 20 min"], dur: "45 min", tags: ["Technique", "Beginner"] },
+                            { title: "Serve & Return", exercises: ["Toss consistency — 10 min", "Flat serve drill — 15 min", "Return positioning — 15 min", "Point play — 20 min"], dur: "60 min", tags: ["Serve", "Intermediate"] },
+                            { title: "Net Play Basics", exercises: ["Split step drill — 10 min", "Volley technique — 15 min", "Approach shot sequence — 20 min"], dur: "45 min", tags: ["Net", "Beginner"] },
+                            { title: "Match Strategy", exercises: ["Pattern recognition — 15 min", "Tactical rally — 20 min", "Pressure point play — 25 min"], dur: "60 min", tags: ["Strategy", "Advanced"] },
+                          ].map(l => (
+                            <div key={l.title} className="rounded-xl bg-white/[0.04] border border-white/[0.06] p-4 hover:border-primary/20 transition-all duration-150">
+                              <div className="flex items-center justify-between mb-3">
+                                <span className="text-sm font-semibold text-foreground">{l.title}</span>
+                                <span className="text-[10px] text-muted-foreground font-mono">{l.dur}</span>
+                              </div>
+                              <div className="space-y-2 mb-3">
+                                {l.exercises.map(ex => (
+                                  <div key={ex} className="flex items-center gap-2">
+                                    <CheckCircle2 className="w-3 h-3 text-primary/50" />
+                                    <span className="text-[11px] text-muted-foreground">{ex}</span>
+                                  </div>
+                                ))}
+                              </div>
+                              <div className="flex gap-1.5">
+                                {l.tags.map(t => (
+                                  <span key={t} className="text-[9px] px-2 py-0.5 rounded-full bg-white/[0.06] text-muted-foreground">{t}</span>
+                                ))}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {activeView === "Payments" && (
+                        <div className="rounded-xl bg-white/[0.04] border border-white/[0.06] overflow-hidden">
+                          <div className="grid grid-cols-[1fr_100px_80px_80px] md:grid-cols-[1fr_120px_100px_100px_100px] gap-4 px-4 py-3 border-b border-white/[0.06] text-[10px] text-muted-foreground uppercase tracking-wider">
+                            <span>Client</span>
+                            <span>Amount</span>
+                            <span>Type</span>
+                            <span className="hidden md:block">Date</span>
+                            <span>Status</span>
+                          </div>
+                          {[
+                            { client: "Alex Martinez", amount: "$480", type: "8-Pack", date: "Jan 8", status: "Paid" },
+                            { client: "Sarah Kim", amount: "$65", type: "Single", date: "Jan 7", status: "Paid" },
+                            { client: "Emma Chen", amount: "$480", type: "8-Pack", date: "Jan 5", status: "Paid" },
+                            { client: "James Rivera", amount: "$65", type: "Trial", date: "Jan 4", status: "Pending" },
+                            { client: "David Okoro", amount: "$240", type: "4-Pack", date: "Jan 2", status: "Paid" },
+                          ].map(p => (
+                            <div key={p.client + p.date} className="grid grid-cols-[1fr_100px_80px_80px] md:grid-cols-[1fr_120px_100px_100px_100px] gap-4 px-4 py-3 border-b border-white/[0.04] last:border-0 hover:bg-primary/[0.03] transition-colors duration-150">
+                              <span className="text-sm text-foreground font-medium">{p.client}</span>
+                              <span className="text-sm font-mono text-foreground">{p.amount}</span>
+                              <span className="text-xs text-muted-foreground">{p.type}</span>
+                              <span className="text-xs text-muted-foreground hidden md:block">{p.date}</span>
+                              <span className={`text-[10px] px-2 py-0.5 rounded-full w-fit ${p.status === 'Paid' ? 'bg-primary/15 text-primary' : 'bg-yellow-500/15 text-yellow-400'}`}>{p.status}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </section>
 
