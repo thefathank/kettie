@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Check, X, Crown, Zap, Tag, Building2 } from "lucide-react";
+import { Check, X, Crown, Zap, Tag, Building2, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSubscription } from "@/contexts/SubscriptionContext";
@@ -145,21 +144,19 @@ const Pricing = () => {
         {/* Header */}
         <header className="border-b border-white/[0.06] bg-black/60 backdrop-blur-xl sticky top-0 z-50">
           <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-            <div
-              className="flex items-center gap-2 cursor-pointer"
-              onClick={() => navigate('/landing')}
-            >
-              <Logo size="sm" />
-              <span className="text-xl font-bold font-heading text-foreground">Pro Pointers Plus</span>
+            <div className="flex items-center gap-4">
+              <button onClick={() => navigate('/landing')} className="text-muted-foreground hover:text-foreground transition-colors duration-150">
+                <ArrowLeft className="h-4 w-4" />
+              </button>
+              <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/landing')}>
+                <Logo size="sm" />
+                <span className="text-xl font-bold font-heading text-foreground">Pro Pointers Plus</span>
+              </div>
             </div>
             {user ? (
-              <Button variant="outline" onClick={() => navigate('/dashboard')}>
-                Go to Dashboard
-              </Button>
+              <Button variant="outline" onClick={() => navigate('/dashboard')}>Go to Dashboard</Button>
             ) : (
-              <Button variant="outline" onClick={() => navigate('/auth')}>
-                Sign In
-              </Button>
+              <Button variant="outline" onClick={() => navigate('/auth')}>Sign In</Button>
             )}
           </div>
         </header>
@@ -167,165 +164,132 @@ const Pricing = () => {
         {/* Pricing Content */}
         <main className="container mx-auto px-4 py-20">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-6xl font-bold font-heading text-foreground mb-4 tracking-[-0.02em]">
-              Simple, Transparent Pricing
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black font-heading text-foreground mb-4 tracking-[-0.02em]">
+              Simple, transparent pricing
+            </h1>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Start free and upgrade when you're ready to grow your coaching business
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
             {/* Free Tier */}
-            <Card className={`relative ${tier === 'free' && user ? 'ring-2 ring-primary' : ''}`}>
+            <div className={`glass rounded-2xl p-8 relative ${tier === 'free' && user ? 'ring-2 ring-primary' : ''}`}>
               {tier === 'free' && user && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <span className="bg-primary text-primary-foreground text-xs font-medium px-3 py-1 rounded-full">
-                    Your Plan
-                  </span>
+                  <span className="bg-primary text-primary-foreground text-xs font-medium px-3 py-1 rounded-full">Your Plan</span>
                 </div>
               )}
-              <CardHeader className="text-center pb-4">
-                <div className="w-12 h-12 bg-white/[0.06] rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Zap className="w-6 h-6 text-muted-foreground" />
-                </div>
-                <CardTitle className="text-2xl">Free</CardTitle>
-                <CardDescription>Perfect for getting started</CardDescription>
-                <div className="mt-4">
-                  <span className="text-5xl font-bold font-mono text-foreground">$0</span>
-                  <span className="text-muted-foreground">/month</span>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <ul className="space-y-3">
-                  {features.free.map((feature, index) => (
-                    <li key={index} className="flex items-center gap-3">
-                      {feature.included ? (
-                        <Check className="w-5 h-5 text-primary flex-shrink-0" />
-                      ) : (
-                        <X className="w-5 h-5 text-muted-foreground/30 flex-shrink-0" />
-                      )}
-                      <span className={feature.included ? 'text-foreground' : 'text-muted-foreground/50'}>
-                        {feature.text}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-                <Button
-                  className="w-full mt-6"
-                  variant={tier === 'free' && !!user ? 'outline' : 'default'}
-                  onClick={handleGetStartedFree}
-                  disabled={tier === 'free' && !!user}
-                >
-                  {tier === 'free' && user ? 'Current Plan' : 'Get Started Free'}
-                </Button>
-              </CardContent>
-            </Card>
+              <div className="w-10 h-10 bg-white/[0.06] rounded-xl flex items-center justify-center mb-6">
+                <Zap className="w-5 h-5 text-muted-foreground" />
+              </div>
+              <h3 className="text-xl font-bold font-heading text-foreground mb-1">Free</h3>
+              <p className="text-sm text-muted-foreground mb-6">Perfect for getting started</p>
+              <div className="mb-8">
+                <span className="text-5xl font-bold font-mono text-foreground">$0</span>
+                <span className="text-muted-foreground">/mo</span>
+              </div>
+              <ul className="space-y-3 mb-8">
+                {features.free.map((feature, index) => (
+                  <li key={index} className="flex items-center gap-3 text-sm">
+                    {feature.included ? (
+                      <Check className="w-4 h-4 text-primary flex-shrink-0" />
+                    ) : (
+                      <X className="w-4 h-4 text-muted-foreground/30 flex-shrink-0" />
+                    )}
+                    <span className={feature.included ? 'text-foreground' : 'text-muted-foreground/50'}>{feature.text}</span>
+                  </li>
+                ))}
+              </ul>
+              <Button
+                className="w-full"
+                variant={tier === 'free' && !!user ? 'outline' : 'default'}
+                onClick={handleGetStartedFree}
+                disabled={tier === 'free' && !!user}
+              >
+                {tier === 'free' && user ? 'Current Plan' : 'Get Started Free'}
+              </Button>
+            </div>
 
-            {/* Unlimited Tier — Popular */}
-            <Card className={`relative border-primary/40 shadow-[0_0_40px_rgba(16,185,129,0.08)] ${tier === 'unlimited' ? 'ring-2 ring-primary' : ''}`}>
+            {/* Unlimited Tier */}
+            <div className={`glass rounded-2xl p-8 relative border-primary/30 shadow-[0_0_60px_rgba(16,185,129,0.06)] ${tier === 'unlimited' ? 'ring-2 ring-primary' : ''}`}>
               {tier === 'unlimited' && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <span className="bg-primary text-primary-foreground text-xs font-medium px-3 py-1 rounded-full">
-                    Your Plan
-                  </span>
+                  <span className="bg-primary text-primary-foreground text-xs font-medium px-3 py-1 rounded-full">Your Plan</span>
                 </div>
               )}
               <div className="absolute -top-3 right-4">
-                <span className="bg-primary text-primary-foreground text-xs font-medium px-3 py-1 rounded-full">
-                  Most Popular
-                </span>
+                <span className="bg-primary text-primary-foreground text-xs font-medium px-3 py-1 rounded-full">Most Popular</span>
               </div>
-              <CardHeader className="text-center pb-4">
-                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Crown className="w-6 h-6 text-primary" />
+              <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center mb-6">
+                <Crown className="w-5 h-5 text-primary" />
+              </div>
+              <h3 className="text-xl font-bold font-heading text-foreground mb-1">Unlimited</h3>
+              <p className="text-sm text-muted-foreground mb-6">For growing coaches</p>
+              <div className="mb-2">
+                <span className="text-5xl font-bold font-mono text-foreground">$10</span>
+                <span className="text-muted-foreground">/mo</span>
+              </div>
+              <p className="text-xs text-muted-foreground mb-8 italic">Less than 10% of one lesson</p>
+              <ul className="space-y-3 mb-8">
+                {features.unlimited.map((feature, index) => (
+                  <li key={index} className="flex items-center gap-3 text-sm">
+                    <Check className="w-4 h-4 text-primary flex-shrink-0" />
+                    <span className="text-foreground">{feature.text}</span>
+                  </li>
+                ))}
+              </ul>
+              {tier !== 'unlimited' && tier !== 'academy' && (
+                <div className="flex items-center gap-2 mb-4">
+                  <Tag className="w-4 h-4 text-muted-foreground" />
+                  <Input placeholder="Coupon code" value={couponCode} onChange={(e) => setCouponCode(e.target.value)} className="flex-1" />
                 </div>
-                <CardTitle className="text-2xl">Unlimited</CardTitle>
-                <CardDescription>For growing coaches</CardDescription>
-                <div className="mt-4">
-                  <span className="text-5xl font-bold font-mono text-foreground">$10</span>
-                  <span className="text-muted-foreground">/month</span>
-                </div>
-                <p className="text-sm text-muted-foreground mt-2 italic">
-                  Less than 10% of one lesson
-                </p>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <ul className="space-y-3">
-                  {features.unlimited.map((feature, index) => (
-                    <li key={index} className="flex items-center gap-3">
-                      <Check className="w-5 h-5 text-primary flex-shrink-0" />
-                      <span className="text-foreground">{feature.text}</span>
-                    </li>
-                  ))}
-                </ul>
-                {tier !== 'unlimited' && tier !== 'academy' && (
-                  <div className="flex items-center gap-2 mt-4">
-                    <Tag className="w-4 h-4 text-muted-foreground" />
-                    <Input
-                      placeholder="Coupon code"
-                      value={couponCode}
-                      onChange={(e) => setCouponCode(e.target.value)}
-                      className="flex-1"
-                    />
-                  </div>
-                )}
-                <Button
-                  className="w-full mt-4"
-                  onClick={tier === 'unlimited' || tier === 'academy' ? () => navigate('/dashboard') : handleUpgrade}
-                  disabled={checkoutLoading || loading}
-                >
-                  {checkoutLoading ? 'Loading...' : tier === 'unlimited' || tier === 'academy' ? 'Go to Dashboard' : 'Upgrade Now'}
-                </Button>
-              </CardContent>
-            </Card>
+              )}
+              <Button
+                className="w-full"
+                onClick={tier === 'unlimited' || tier === 'academy' ? () => navigate('/dashboard') : handleUpgrade}
+                disabled={checkoutLoading || loading}
+              >
+                {checkoutLoading ? 'Loading...' : tier === 'unlimited' || tier === 'academy' ? 'Go to Dashboard' : 'Upgrade Now'}
+              </Button>
+            </div>
 
             {/* Academy Tier */}
-            <Card className={`relative border-accent/30 ${tier === 'academy' ? 'ring-2 ring-accent' : ''}`}>
+            <div className={`glass rounded-2xl p-8 relative border-accent/20 ${tier === 'academy' ? 'ring-2 ring-accent' : ''}`}>
               {tier === 'academy' && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <span className="bg-accent text-accent-foreground text-xs font-medium px-3 py-1 rounded-full">
-                    Your Plan
-                  </span>
+                  <span className="bg-accent text-accent-foreground text-xs font-medium px-3 py-1 rounded-full">Your Plan</span>
                 </div>
               )}
               <div className="absolute -top-3 right-4">
-                <span className="bg-accent/90 text-accent-foreground text-xs font-medium px-3 py-1 rounded-full">
-                  Teams
-                </span>
+                <span className="bg-accent/90 text-accent-foreground text-xs font-medium px-3 py-1 rounded-full">Teams</span>
               </div>
-              <CardHeader className="text-center pb-4">
-                <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Building2 className="w-6 h-6 text-accent" />
-                </div>
-                <CardTitle className="text-2xl">Academy</CardTitle>
-                <CardDescription>For tennis academies & clubs</CardDescription>
-                <div className="mt-4">
-                  <span className="text-5xl font-bold font-mono text-foreground">$49</span>
-                  <span className="text-muted-foreground">/month</span>
-                </div>
-                <p className="text-sm text-muted-foreground mt-2 italic">
-                  Unlimited coaches, one subscription
-                </p>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <ul className="space-y-3">
-                  {features.academy.map((feature, index) => (
-                    <li key={index} className="flex items-center gap-3">
-                      <Check className="w-5 h-5 text-accent flex-shrink-0" />
-                      <span className="text-foreground">{feature.text}</span>
-                    </li>
-                  ))}
-                </ul>
-                <Button
-                  className="w-full mt-4 bg-accent hover:bg-accent/90 text-accent-foreground"
-                  onClick={tier === 'academy' ? () => navigate('/academy') : () => setAcademyDialogOpen(true)}
-                  disabled={checkoutLoading || loading}
-                >
-                  {tier === 'academy' ? 'Go to Academy' : 'Get Started'}
-                </Button>
-              </CardContent>
-            </Card>
+              <div className="w-10 h-10 bg-accent/10 rounded-xl flex items-center justify-center mb-6">
+                <Building2 className="w-5 h-5 text-accent" />
+              </div>
+              <h3 className="text-xl font-bold font-heading text-foreground mb-1">Academy</h3>
+              <p className="text-sm text-muted-foreground mb-6">For tennis academies & clubs</p>
+              <div className="mb-2">
+                <span className="text-5xl font-bold font-mono text-foreground">$49</span>
+                <span className="text-muted-foreground">/mo</span>
+              </div>
+              <p className="text-xs text-muted-foreground mb-8 italic">Unlimited coaches, one subscription</p>
+              <ul className="space-y-3 mb-8">
+                {features.academy.map((feature, index) => (
+                  <li key={index} className="flex items-center gap-3 text-sm">
+                    <Check className="w-4 h-4 text-accent flex-shrink-0" />
+                    <span className="text-foreground">{feature.text}</span>
+                  </li>
+                ))}
+              </ul>
+              <Button
+                className="w-full bg-accent hover:bg-accent/90 text-accent-foreground"
+                onClick={tier === 'academy' ? () => navigate('/academy') : () => setAcademyDialogOpen(true)}
+                disabled={checkoutLoading || loading}
+              >
+                {tier === 'academy' ? 'Go to Academy' : 'Get Started'}
+              </Button>
+            </div>
           </div>
 
           <div className="mt-16 text-center">
@@ -369,9 +333,7 @@ const Pricing = () => {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setAcademyDialogOpen(false)}>
-              Cancel
-            </Button>
+            <Button variant="outline" onClick={() => setAcademyDialogOpen(false)}>Cancel</Button>
             <Button
               onClick={handleAcademyCheckout}
               disabled={checkoutLoading || !academyName.trim()}
