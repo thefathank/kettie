@@ -99,13 +99,15 @@ const Dashboard = () => {
     enabled: !!user?.id,
   });
 
+  const navigate = useNavigate();
+
   return (
     <Layout>
       <div className="space-y-8">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+            <h1 className="text-3xl font-bold font-heading tracking-tight">Dashboard</h1>
             <p className="text-muted-foreground">Welcome back! Here's your coaching overview.</p>
           </div>
           <AddSessionDialog />
@@ -118,10 +120,10 @@ const Dashboard = () => {
               {[1, 2, 3, 4].map((i) => (
                 <Card key={i}>
                   <CardHeader className="pb-2">
-                    <Skeleton className="h-4 w-24" />
+                    <Skeleton className="h-4 w-24 bg-white/[0.06]" />
                   </CardHeader>
                   <CardContent>
-                    <Skeleton className="h-8 w-16" />
+                    <Skeleton className="h-8 w-16 bg-white/[0.06]" />
                   </CardContent>
                 </Card>
               ))}
@@ -158,45 +160,48 @@ const Dashboard = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Clock className="h-5 w-5" />
+                <Clock className="h-5 w-5 text-primary" />
                 Today's Schedule
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-3">
               {sessionsLoading ? (
-                <div className="space-y-4">
+                <div className="space-y-3">
                   {[1, 2, 3].map((i) => (
-                    <Skeleton key={i} className="h-20 w-full" />
+                    <Skeleton key={i} className="h-20 w-full bg-white/[0.06]" />
                   ))}
                 </div>
               ) : todaysSessions && todaysSessions.length > 0 ? (
                 <>
-                  {todaysSessions.map((session) => (
+                  {todaysSessions.map((session, idx) => (
                     <div
                       key={session.id}
-                      className="flex items-center justify-between rounded-lg border border-border bg-muted/50 p-4"
+                      className={`flex items-center justify-between p-4 rounded-xl bg-white/[0.03] transition-colors duration-150 hover:bg-white/[0.06] ${
+                        idx < todaysSessions.length - 1 ? "border-b border-white/[0.04]" : ""
+                      }`}
                     >
                       <div className="space-y-1">
-                        <p className="font-medium">{session.clients?.full_name}</p>
+                        <p className="font-medium text-foreground">{session.clients?.full_name}</p>
                         <p className="text-sm text-muted-foreground">
                           {session.duration_minutes} min {session.location ? `• ${session.location}` : ""}
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className="font-semibold text-primary">
+                        <p className="font-semibold font-mono text-primary">
                           {format(new Date(session.session_date), "h:mm a")}
                         </p>
                       </div>
                     </div>
                   ))}
-                  <Button variant="outline" className="w-full">
+                  <Button variant="outline" className="w-full" onClick={() => navigate("/schedule")}>
                     View Full Schedule
                   </Button>
                 </>
               ) : (
-                <p className="text-sm text-muted-foreground text-center py-8">
-                  No sessions scheduled for today
-                </p>
+                <div className="text-center py-12">
+                  <Calendar className="h-12 w-12 mx-auto mb-4 text-white/[0.15]" />
+                  <p className="text-muted-foreground">No sessions scheduled for today</p>
+                </div>
               )}
             </CardContent>
           </Card>
@@ -210,16 +215,16 @@ const Dashboard = () => {
               {sessionsLoading ? (
                 <div className="space-y-4">
                   {[1, 2, 3].map((i) => (
-                    <Skeleton key={i} className="h-12 w-full" />
+                    <Skeleton key={i} className="h-12 w-full bg-white/[0.06]" />
                   ))}
                 </div>
               ) : todaysSessions && todaysSessions.length > 0 ? (
                 <div className="space-y-4">
                   {todaysSessions.slice(0, 4).map((session) => (
                     <div key={session.id} className="flex items-start gap-4">
-                      <div className="mt-1 h-2 w-2 rounded-full bg-primary" />
+                      <div className="mt-1.5 h-2 w-2 rounded-full bg-primary" />
                       <div className="flex-1 space-y-1">
-                        <p className="text-sm">Session with {session.clients?.full_name}</p>
+                        <p className="text-sm text-foreground">Session with {session.clients?.full_name}</p>
                         <p className="text-xs text-muted-foreground">
                           {format(new Date(session.session_date), "MMM d 'at' h:mm a")}
                         </p>
@@ -228,9 +233,10 @@ const Dashboard = () => {
                   ))}
                 </div>
               ) : (
-                <p className="text-sm text-muted-foreground text-center py-8">
-                  No recent activity
-                </p>
+                <div className="text-center py-12">
+                  <TrendingUp className="h-12 w-12 mx-auto mb-4 text-white/[0.15]" />
+                  <p className="text-muted-foreground">No recent activity</p>
+                </div>
               )}
             </CardContent>
           </Card>
