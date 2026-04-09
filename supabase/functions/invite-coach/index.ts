@@ -107,7 +107,7 @@ serve(async (req) => {
     logStep("Invitation created", { invitationId: invitation.id });
 
     // Send invitation email
-    const resendApiKey = Deno.env.get("RESEND_API_KEY");
+    const resendApiKey = Deno.env.get("ResendKey");
     if (resendApiKey) {
       const resend = new Resend(resendApiKey);
       const origin = req.headers.get("origin") || "https://propointersplus.com";
