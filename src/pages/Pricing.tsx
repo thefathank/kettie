@@ -63,7 +63,6 @@ const Pricing = () => {
     }
 
     if (!user || !session) {
-      // Store academy name and redirect to register
       sessionStorage.setItem('pendingAcademyName', academyName);
       navigate('/register/academy');
       return;
@@ -143,10 +142,10 @@ const Pricing = () => {
     <div className="min-h-screen bg-background flex flex-col">
       <div className="flex-1">
         {/* Header */}
-        <header className="border-b border-border bg-card/50 backdrop-blur-sm">
+        <header className="border-b border-white/[0.06] bg-black/60 backdrop-blur-xl">
           <div className="container mx-auto px-4 py-4 flex items-center justify-between">
             <h1
-              className="text-xl font-bold text-primary cursor-pointer"
+              className="text-xl font-bold font-heading text-primary cursor-pointer"
               onClick={() => navigate('/')}
             >
               Pro Pointers Plus
@@ -166,7 +165,7 @@ const Pricing = () => {
         {/* Pricing Content */}
         <main className="container mx-auto px-4 py-16">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-foreground mb-4">
+            <h2 className="text-4xl md:text-5xl font-bold font-heading text-foreground mb-4">
               Simple, Transparent Pricing
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
@@ -185,13 +184,13 @@ const Pricing = () => {
                 </div>
               )}
               <CardHeader className="text-center pb-4">
-                <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-12 h-12 bg-white/[0.06] rounded-full flex items-center justify-center mx-auto mb-4">
                   <Zap className="w-6 h-6 text-muted-foreground" />
                 </div>
                 <CardTitle className="text-2xl">Free</CardTitle>
                 <CardDescription>Perfect for getting started</CardDescription>
                 <div className="mt-4">
-                  <span className="text-4xl font-bold text-foreground">$0</span>
+                  <span className="text-4xl font-bold font-mono text-foreground">$0</span>
                   <span className="text-muted-foreground">/month</span>
                 </div>
               </CardHeader>
@@ -202,9 +201,9 @@ const Pricing = () => {
                       {feature.included ? (
                         <Check className="w-5 h-5 text-primary flex-shrink-0" />
                       ) : (
-                        <X className="w-5 h-5 text-muted-foreground flex-shrink-0" />
+                        <X className="w-5 h-5 text-muted-foreground/40 flex-shrink-0" />
                       )}
-                      <span className={feature.included ? 'text-foreground' : 'text-muted-foreground'}>
+                      <span className={feature.included ? 'text-foreground' : 'text-muted-foreground/60'}>
                         {feature.text}
                       </span>
                     </li>
@@ -222,7 +221,7 @@ const Pricing = () => {
             </Card>
 
             {/* Unlimited Tier */}
-            <Card className={`relative border-primary ${tier === 'unlimited' ? 'ring-2 ring-primary' : ''}`}>
+            <Card className={`relative border-primary/50 ${tier === 'unlimited' ? 'ring-2 ring-primary' : ''}`}>
               {tier === 'unlimited' && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                   <span className="bg-primary text-primary-foreground text-xs font-medium px-3 py-1 rounded-full">
@@ -231,7 +230,7 @@ const Pricing = () => {
                 </div>
               )}
               <div className="absolute -top-3 right-4">
-                <span className="bg-amber-500 text-white text-xs font-medium px-3 py-1 rounded-full">
+                <span className="bg-accent text-accent-foreground text-xs font-medium px-3 py-1 rounded-full">
                   Most Popular
                 </span>
               </div>
@@ -242,7 +241,7 @@ const Pricing = () => {
                 <CardTitle className="text-2xl">Unlimited</CardTitle>
                 <CardDescription>For growing coaches</CardDescription>
                 <div className="mt-4">
-                  <span className="text-4xl font-bold text-foreground">$10</span>
+                  <span className="text-4xl font-bold font-mono text-foreground">$10</span>
                   <span className="text-muted-foreground">/month</span>
                 </div>
                 <p className="text-sm text-muted-foreground mt-2 italic">
@@ -280,27 +279,27 @@ const Pricing = () => {
             </Card>
 
             {/* Academy Tier */}
-            <Card className={`relative border-amber-500 ${tier === 'academy' ? 'ring-2 ring-amber-500' : ''}`}>
+            <Card className={`relative border-accent/50 ${tier === 'academy' ? 'ring-2 ring-accent' : ''}`}>
               {tier === 'academy' && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <span className="bg-amber-500 text-white text-xs font-medium px-3 py-1 rounded-full">
+                  <span className="bg-accent text-accent-foreground text-xs font-medium px-3 py-1 rounded-full">
                     Your Plan
                   </span>
                 </div>
               )}
               <div className="absolute -top-3 right-4">
-                <span className="bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-medium px-3 py-1 rounded-full">
+                <span className="bg-gradient-to-r from-accent to-orange-500 text-white text-xs font-medium px-3 py-1 rounded-full">
                   Teams
                 </span>
               </div>
               <CardHeader className="text-center pb-4">
-                <div className="w-12 h-12 bg-amber-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Building2 className="w-6 h-6 text-amber-500" />
+                <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Building2 className="w-6 h-6 text-accent" />
                 </div>
                 <CardTitle className="text-2xl">Academy</CardTitle>
                 <CardDescription>For tennis academies & clubs</CardDescription>
                 <div className="mt-4">
-                  <span className="text-4xl font-bold text-foreground">$49</span>
+                  <span className="text-4xl font-bold font-mono text-foreground">$49</span>
                   <span className="text-muted-foreground">/month</span>
                 </div>
                 <p className="text-sm text-muted-foreground mt-2 italic">
@@ -311,13 +310,13 @@ const Pricing = () => {
                 <ul className="space-y-3">
                   {features.academy.map((feature, index) => (
                     <li key={index} className="flex items-center gap-3">
-                      <Check className="w-5 h-5 text-amber-500 flex-shrink-0" />
+                      <Check className="w-5 h-5 text-accent flex-shrink-0" />
                       <span className="text-foreground">{feature.text}</span>
                     </li>
                   ))}
                 </ul>
                 <Button
-                  className="w-full mt-4 bg-amber-500 hover:bg-amber-600"
+                  className="w-full mt-4 bg-accent hover:bg-accent/90 text-accent-foreground"
                   onClick={tier === 'academy' ? () => navigate('/academy') : () => setAcademyDialogOpen(true)}
                   disabled={checkoutLoading || loading}
                 >
@@ -327,7 +326,6 @@ const Pricing = () => {
             </Card>
           </div>
 
-          {/* FAQ or Additional Info */}
           <div className="mt-16 text-center">
             <p className="text-muted-foreground">
               Questions? Contact us at{' '}
@@ -375,7 +373,7 @@ const Pricing = () => {
             <Button
               onClick={handleAcademyCheckout}
               disabled={checkoutLoading || !academyName.trim()}
-              className="bg-amber-500 hover:bg-amber-600"
+              className="bg-accent hover:bg-accent/90 text-accent-foreground"
             >
               {checkoutLoading ? 'Loading...' : 'Continue to Checkout'}
             </Button>
