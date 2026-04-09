@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -29,6 +29,19 @@ const Landing = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [sessionsPerWeek, setSessionsPerWeek] = useState(15);
+
+  const calcData = useMemo(() => {
+    const manualMinPerSession = 18; // scheduling, notes, follow-up, payment tracking
+    const appMinPerSession = 4;
+    const manualHrsWeek = (sessionsPerWeek * manualMinPerSession) / 60;
+    const appHrsWeek = (sessionsPerWeek * appMinPerSession) / 60;
+    const savedHrsWeek = manualHrsWeek - appHrsWeek;
+    const savedHrsYear = savedHrsWeek * 50;
+    const manualPct = 100;
+    const appPct = (appHrsWeek / manualHrsWeek) * 100;
+    return { manualHrsWeek: manualHrsWeek.toFixed(1), appHrsWeek: appHrsWeek.toFixed(1), savedHrsWeek: savedHrsWeek.toFixed(1), savedHrsYear: Math.round(savedHrsYear), manualPct, appPct };
+  }, [sessionsPerWeek]);
 
   useEffect(() => {
     const handleScroll = () => setNavScrolled(window.scrollY > 40);
@@ -375,6 +388,89 @@ const Landing = () => {
               See pricing for your setup <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </motion.div>
+        </div>
+      </section>
+
+      {/* ===== SAVE TIME CALCULATOR ===== */}
+      <section className="py-28 border-t border-white/[0.04]">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* Left — copy + slider */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+            >
+              <p className="text-xs font-semibold text-primary uppercase tracking-widest mb-4">Save Time</p>
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-black font-heading text-foreground tracking-[-0.02em] mb-4">
+                More hours coaching,<br />less time on admin.
+              </h2>
+              <p className="text-muted-foreground mb-10 max-w-md leading-relaxed">
+                Pro Pointers Plus automates scheduling, payment tracking, and lesson delivery — saving you hours every week on paperwork and follow-ups.
+              </p>
+
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">Sessions per week:</span>
+                  <span className="text-2xl font-bold font-mono text-foreground">{sessionsPerWeek}</span>
+                </div>
+                <input
+                  type="range"
+                  min={1}
+                  max={40}
+                  value={sessionsPerWeek}
+                  onChange={(e) => setSessionsPerWeek(Number(e.target.value))}
+                  className="w-full h-1.5 bg-white/[0.08] rounded-full appearance-none cursor-pointer accent-primary [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary [&::-webkit-slider-thumb]:shadow-[0_0_12px_rgba(16,185,129,0.5)] [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-primary [&::-moz-range-thumb]:border-0"
+                />
+                <p className="text-xs text-muted-foreground/50">Estimates based on average admin time per session.</p>
+              </div>
+            </motion.div>
+
+            {/* Right — visual bars + savings */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="flex items-end gap-8 justify-center"
+            >
+              {/* Manual bar */}
+              <div className="flex flex-col items-center gap-3">
+                <span className="text-2xl md:text-3xl font-bold font-mono text-foreground">{calcData.manualHrsWeek}h</span>
+                <span className="text-xs text-muted-foreground">admin / week</span>
+                <div className="w-20 md:w-24 rounded-xl overflow-hidden bg-white/[0.06] border border-white/[0.08]" style={{ height: "200px" }}>
+                  <div
+                    className="w-full bg-white/[0.15] rounded-xl transition-all duration-300 ease-out"
+                    style={{ height: `${calcData.manualPct}%`, marginTop: `${100 - calcData.manualPct}%` }}
+                  />
+                </div>
+                <span className="text-xs text-muted-foreground/60">Manual</span>
+              </div>
+
+              {/* App bar */}
+              <div className="flex flex-col items-center gap-3">
+                <span className="text-2xl md:text-3xl font-bold font-mono text-primary">{calcData.appHrsWeek}h</span>
+                <span className="text-xs text-muted-foreground">admin / week</span>
+                <div className="w-20 md:w-24 rounded-xl overflow-hidden bg-white/[0.06] border border-primary/20" style={{ height: "200px" }}>
+                  <div
+                    className="w-full bg-primary/60 rounded-xl transition-all duration-300 ease-out"
+                    style={{ height: `${calcData.appPct}%`, marginTop: `${100 - calcData.appPct}%` }}
+                  />
+                </div>
+                <span className="text-xs text-primary">With P³</span>
+              </div>
+
+              {/* Annual savings box */}
+              <div className="flex flex-col items-center gap-3">
+                <div className="glass rounded-2xl border-primary/30 p-6 md:p-8 text-center">
+                  <div className="text-3xl md:text-4xl font-bold font-mono text-primary mb-1">{calcData.savedHrsYear}h</div>
+                  <div className="text-xs text-muted-foreground font-medium">saved per year</div>
+                </div>
+                <span className="text-xs text-primary/60">annual savings</span>
+              </div>
+            </motion.div>
+          </div>
         </div>
       </section>
 
