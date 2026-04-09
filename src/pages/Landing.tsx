@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import {
   Calendar, Users, CreditCard, BookOpen, Video, Building2, BarChart3,
-  ArrowRight, Play, ChevronRight, Zap, Shield, Clock, Menu, X
+  ArrowRight, Play, ChevronRight, Zap, Shield, Clock, Menu, X,
+  LayoutDashboard, DollarSign, TrendingUp, CheckCircle2
 } from "lucide-react";
 import { Footer } from "@/components/Footer";
 import { Logo } from "@/components/Logo";
