@@ -169,95 +169,82 @@ const Landing = () => {
       </Dialog>
 
       {/* ===== HERO ===== */}
-      <section ref={heroRef} onMouseMove={handleMouseMove} className="relative min-h-screen flex items-center overflow-hidden pt-20">
-        <div className="hero-mesh"><div className="mesh-blob" /></div>
+      <section ref={heroRef} className="relative min-h-[100vh] flex flex-col items-center overflow-hidden pt-32 md:pt-40">
+        {/* Subtle background — no mesh, just a faint radial glow */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-[20%] left-1/2 -translate-x-1/2 w-[800px] h-[500px] rounded-full bg-primary/[0.04] blur-[150px]" />
+        </div>
 
-        <div className="relative z-10 container mx-auto px-4 grid lg:grid-cols-2 gap-12 items-center">
-          {/* Left — text */}
-          <div className="max-w-xl">
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="text-5xl md:text-6xl lg:text-[72px] font-black font-heading text-foreground tracking-[-0.03em] leading-[0.95] mb-6"
-            >
-              Your coaching,
-              <br />
-              <span className="text-primary">engineered.</span>
-            </motion.h1>
+        {/* Decorative arc lines behind the mockup */}
+        <svg className="absolute bottom-[10%] left-1/2 -translate-x-1/2 w-[900px] h-[500px] pointer-events-none opacity-20" viewBox="0 0 900 500" fill="none">
+          <ellipse cx="450" cy="500" rx="400" ry="350" stroke="hsl(var(--primary))" strokeWidth="1" />
+          <ellipse cx="450" cy="500" rx="320" ry="280" stroke="hsl(var(--primary) / 0.5)" strokeWidth="0.5" />
+          <ellipse cx="550" cy="520" rx="350" ry="300" stroke="hsl(var(--destructive) / 0.3)" strokeWidth="0.5" />
+        </svg>
 
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-lg md:text-xl text-muted-foreground mb-8 leading-relaxed"
-            >
-              Clients. Lessons. Payments. Schedule.
-              <br className="hidden sm:block" />
-              One platform, zero friction.
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="flex flex-wrap items-center gap-4 mb-6"
-            >
-              <Button onClick={() => navigate('/pricing')} size="lg" className="text-base px-8 btn-pulse-glow">
-                Start Free <ArrowRight className="ml-1 h-4 w-4" />
-              </Button>
-              <Button onClick={() => navigate('/demo/dashboard')} size="lg" variant="outline" className="text-base px-8">
-                <Play className="mr-2 h-4 w-4" /> See Demo
-              </Button>
-            </motion.div>
-
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="text-xs text-muted-foreground/60"
-            >
-              Built for independent coaches and academies
-            </motion.p>
-          </div>
-
-          {/* Right — 3D device mockup */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            className="relative flex justify-center"
+        {/* Centered text */}
+        <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-5xl md:text-6xl lg:text-[76px] font-black font-heading text-foreground tracking-[-0.03em] leading-[1] mb-6 italic"
           >
-            {/* Emerald glow behind device */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="w-[80%] h-[60%] rounded-full bg-primary/10 blur-[100px]" />
-            </div>
+            Do what you love coaching.<br />We'll handle the rest.
+          </motion.h1>
 
-            <div
-              className="relative w-full max-w-[560px] transition-transform duration-100 ease-out"
-              style={{
-                perspective: "1200px",
-              }}
+          <motion.p
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="text-lg md:text-xl text-muted-foreground mb-10 font-medium"
+          >
+            Modern coaching management for tennis pros and academies.
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            <Button
+              onClick={() => navigate('/pricing')}
+              size="lg"
+              className="bg-foreground text-background hover:bg-foreground/90 rounded-full px-8 text-sm font-semibold uppercase tracking-wider h-12"
             >
-              <div
-                className="relative glass rounded-2xl p-2 shadow-[0_40px_100px_rgba(0,0,0,0.5)]"
-                style={{
-                  transform: `rotateY(${mousePos.x * 8}deg) rotateX(${-mousePos.y * 6}deg)`,
-                  transformStyle: "preserve-3d",
-                }}
-              >
-                {/* Browser chrome bar */}
-                <div className="flex items-center gap-1.5 px-3 py-2 bg-white/[0.03] rounded-t-xl">
-                  <div className="w-2.5 h-2.5 rounded-full bg-white/10" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-white/10" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-white/10" />
-                  <div className="flex-1 mx-4 h-5 bg-white/[0.04] rounded-md" />
-                </div>
-                <img src={mockupDashboard} alt="Pro Pointers Plus Dashboard" className="rounded-b-xl w-full" loading="eager" />
-              </div>
-            </div>
+              <ArrowRight className="mr-2 h-4 w-4" /> Get Started Free
+            </Button>
           </motion.div>
         </div>
+
+        {/* Large mockup — centered, bottom-aligned, bleeding below fold */}
+        <motion.div
+          initial={{ opacity: 0, y: 60 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.9, delay: 0.4 }}
+          className="relative z-10 w-full max-w-5xl mx-auto mt-16 px-4"
+          onMouseMove={handleMouseMove}
+        >
+          <div style={{ perspective: "1200px" }}>
+            <div
+              className="relative rounded-xl overflow-hidden shadow-[0_40px_120px_rgba(0,0,0,0.6)] border border-white/[0.08]"
+              style={{
+                transform: `rotateY(${mousePos.x * 4}deg) rotateX(${-mousePos.y * 3}deg)`,
+                transformStyle: "preserve-3d",
+                transition: "transform 0.1s ease-out",
+              }}
+            >
+              {/* Browser chrome */}
+              <div className="flex items-center gap-1.5 px-4 py-2.5 bg-[#1a1a1a]">
+                <div className="w-3 h-3 rounded-full bg-[#ff5f57]" />
+                <div className="w-3 h-3 rounded-full bg-[#febc2e]" />
+                <div className="w-3 h-3 rounded-full bg-[#28c840]" />
+                <div className="flex-1 mx-6 h-6 bg-white/[0.06] rounded-md" />
+              </div>
+              <img src={mockupDashboard} alt="Pro Pointers Plus Dashboard" className="w-full block" loading="eager" />
+            </div>
+          </div>
+        </motion.div>
       </section>
 
       {/* ===== BENTO FEATURE GRID ===== */}
