@@ -2,7 +2,7 @@ import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Search, Mail, Phone } from "lucide-react";
+import { Search, Mail, Phone, Users, ChevronRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { AddClientDialog } from "@/components/AddClientDialog";
 import { supabase } from "@/integrations/supabase/client";
@@ -62,11 +62,11 @@ const Clients = () => {
 
   return (
     <Layout>
-      <div className="space-y-6">
+      <div className="space-y-8">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Clients</h1>
+            <h1 className="text-3xl font-bold font-heading tracking-tight">Clients</h1>
             <p className="text-muted-foreground">Manage your player roster and track their progress.</p>
           </div>
           <AddClientDialog />
@@ -89,28 +89,30 @@ const Clients = () => {
             {[1, 2, 3].map((i) => (
               <Card key={i}>
                 <CardContent className="pt-6">
-                  <Skeleton className="h-48 w-full" />
+                  <Skeleton className="h-48 w-full bg-white/[0.06]" />
                 </CardContent>
               </Card>
             ))}
           </div>
         ) : filteredClients.length === 0 ? (
           <Card>
-            <CardContent className="pt-6 text-center py-12">
-              <p className="text-muted-foreground">
+            <CardContent className="pt-6 text-center py-16">
+              <Users className="h-12 w-12 mx-auto mb-4 text-white/[0.15]" />
+              <p className="text-muted-foreground mb-4">
                 {searchTerm ? "No clients found matching your search." : "No clients yet. Add your first client to get started!"}
               </p>
+              {!searchTerm && <AddClientDialog />}
             </CardContent>
           </Card>
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {filteredClients.map((client) => (
-              <Card key={client.id} className="hover:shadow-md transition-shadow cursor-pointer">
+              <Card key={client.id} className="cursor-pointer transition-all duration-150 hover:bg-white/[0.06]">
                 <CardContent className="pt-6">
                   <div className="space-y-4">
                     <div className="flex items-start justify-between">
                       <div>
-                        <h3 className="font-semibold text-lg">{client.full_name}</h3>
+                        <h3 className="font-semibold font-heading text-lg text-foreground">{client.full_name}</h3>
                         {client.skill_level && (
                           <Badge variant="secondary" className="mt-1">
                             {client.skill_level}
@@ -119,7 +121,6 @@ const Clients = () => {
                       </div>
                       <Badge
                         variant={client.status === "active" ? "default" : "secondary"}
-                        className="bg-primary text-primary-foreground"
                       >
                         {client.status}
                       </Badge>
@@ -140,10 +141,10 @@ const Clients = () => {
                       )}
                     </div>
 
-                    <div className="pt-4 border-t border-border">
+                    <div className="pt-4 border-t border-white/[0.06]">
                       <div className="flex justify-between text-sm">
                         <span className="text-muted-foreground">Total Sessions</span>
-                        <span className="font-semibold">{client.totalSessions}</span>
+                        <span className="font-semibold font-mono">{client.totalSessions}</span>
                       </div>
                       <div className="flex justify-between text-sm mt-2">
                         <span className="text-muted-foreground">Next Session</span>
@@ -153,10 +154,11 @@ const Clients = () => {
 
                     <Button 
                       variant="outline" 
-                      className="w-full"
+                      className="w-full gap-2"
                       onClick={() => window.location.href = `/clients/${client.id}`}
                     >
                       View Details
+                      <ChevronRight className="h-4 w-4" />
                     </Button>
                   </div>
                 </CardContent>

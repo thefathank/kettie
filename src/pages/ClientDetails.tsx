@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Mail, Phone, Calendar, Link2, Copy } from "lucide-react";
+import { ArrowLeft, Mail, Phone, Calendar, Link2, Copy, Users } from "lucide-react";
 import { format } from "date-fns";
 import { AddNoteDialog } from "@/components/AddNoteDialog";
 import { AddVideoDialog } from "@/components/AddVideoDialog";
@@ -25,59 +25,36 @@ const ClientDetails = () => {
   const { user } = useAuth();
   const { toast } = useToast();
 
-  // Fetch coach profile separately as it's user-level data that can be cached
   const { data: coachProfile } = useQuery({
     queryKey: ["coach-profile", user?.id],
     queryFn: async () => {
       if (!user?.id) return null;
-
       const { data, error } = await supabase
         .from("profiles")
         .select("cal_username")
         .eq("id", user.id)
         .single();
-
       if (error) throw error;
       return data;
     },
     enabled: !!user?.id,
   });
 
-  // Combine client and session balance queries for faster loading
   const { data: clientData, isLoading } = useQuery({
     queryKey: ["client-details", clientId, user?.id],
     queryFn: async () => {
       if (!user?.id || !clientId) return null;
-
-      // Fetch client and payments in parallel
       const [clientResult, paymentsResult] = await Promise.all([
-        supabase
-          .from("clients")
-          .select("*")
-          .eq("id", clientId)
-          .eq("coach_id", user.id)
-          .single(),
-        supabase
-          .from("payments")
-          .select("sessions_covered, sessions_remaining")
-          .eq("client_id", clientId)
-          .eq("coach_id", user.id)
-          .eq("payment_status", "completed")
+        supabase.from("clients").select("*").eq("id", clientId).eq("coach_id", user.id).single(),
+        supabase.from("payments").select("sessions_covered, sessions_remaining").eq("client_id", clientId).eq("coach_id", user.id).eq("payment_status", "completed")
       ]);
-
       if (clientResult.error) throw clientResult.error;
       if (paymentsResult.error) throw paymentsResult.error;
-
-      // Calculate session balance
       const payments = paymentsResult.data || [];
       const totalCovered = payments.reduce((sum, p) => sum + (p.sessions_covered || 0), 0);
       const totalRemaining = payments.reduce((sum, p) => sum + (p.sessions_remaining || 0), 0);
       const totalUsed = totalCovered - totalRemaining;
-
-      return {
-        client: clientResult.data,
-        sessionBalance: { totalCovered, totalRemaining, totalUsed }
-      };
+      return { client: clientResult.data, sessionBalance: { totalCovered, totalRemaining, totalUsed } };
     },
     enabled: !!user?.id && !!clientId,
   });
@@ -88,9 +65,9 @@ const ClientDetails = () => {
   if (isLoading) {
     return (
       <Layout>
-        <div className="space-y-6">
-          <Skeleton className="h-12 w-full" />
-          <Skeleton className="h-64 w-full" />
+        <div className="space-y-8">
+          <Skeleton className="h-12 w-full bg-white/[0.06]" />
+          <Skeleton className="h-64 w-full bg-white/[0.06]" />
         </div>
       </Layout>
     );
@@ -99,11 +76,10 @@ const ClientDetails = () => {
   if (!client) {
     return (
       <Layout>
-        <div className="text-center py-12">
-          <p className="text-muted-foreground">Client not found</p>
-          <Button onClick={() => navigate("/clients")} className="mt-4">
-            Back to Clients
-          </Button>
+        <div className="text-center py-16">
+          <Users className="h-12 w-12 mx-auto mb-4 text-white/[0.15]" />
+          <p className="text-muted-foreground mb-4">Client not found</p>
+          <Button onClick={() => navigate("/clients")}>Back to Clients</Button>
         </div>
       </Layout>
     );
@@ -111,14 +87,14 @@ const ClientDetails = () => {
 
   return (
     <Layout>
-      <div className="space-y-6">
+      <div className="space-y-8">
         {/* Header */}
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" onClick={() => navigate("/clients")}>
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div className="flex-1">
-            <h1 className="text-3xl font-bold tracking-tight">{client.full_name}</h1>
+            <h1 className="text-3xl font-bold font-heading tracking-tight">{client.full_name}</h1>
             <p className="text-muted-foreground">Client Profile</p>
           </div>
           <Badge variant={client.status === "active" ? "default" : "secondary"}>
@@ -126,7 +102,7 @@ const ClientDetails = () => {
           </Badge>
         </div>
 
-        {/* Client Info Card */}
+        {/* Client Info Cards */}
         <div className="grid gap-6 md:grid-cols-2">
           <Card>
             <CardHeader>
@@ -136,13 +112,13 @@ const ClientDetails = () => {
               <div className="grid gap-4">
                 {client.email && (
                   <div className="flex items-center gap-2">
-                    <Mail className="h-4 w-4 text-muted-foreground" />
+                    <Mail className="h-4 w-4 text-primary/60" />
                     <span>{client.email}</span>
                   </div>
                 )}
                 {client.phone && (
                   <div className="flex items-center gap-2">
-                    <Phone className="h-4 w-4 text-muted-foreground" />
+                    <Phone className="h-4 w-4 text-primary/60" />
                     <span>{client.phone}</span>
                   </div>
                 )}
@@ -153,12 +129,12 @@ const ClientDetails = () => {
                   </div>
                 )}
                 <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-muted-foreground" />
+                  <Calendar className="h-4 w-4 text-primary/60" />
                   <span>Joined {format(new Date(client.created_at), "MMM d, yyyy")}</span>
                 </div>
               </div>
               {client.notes && (
-                <div className="pt-4 border-t">
+                <div className="pt-4 border-t border-white/[0.06]">
                   <p className="text-sm text-muted-foreground mb-2">Notes:</p>
                   <p className="text-sm">{client.notes}</p>
                 </div>
@@ -175,17 +151,17 @@ const ClientDetails = () => {
                 <div className="space-y-4">
                   <div className="grid grid-cols-3 gap-4">
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-primary">
+                      <div className="text-2xl font-bold font-mono text-primary">
                         {sessionBalance.totalRemaining}
                       </div>
                       <p className="text-sm text-muted-foreground">Remaining</p>
                     </div>
                     <div className="text-center">
-                      <div className="text-2xl font-bold">{sessionBalance.totalUsed}</div>
+                      <div className="text-2xl font-bold font-mono">{sessionBalance.totalUsed}</div>
                       <p className="text-sm text-muted-foreground">Used</p>
                     </div>
                     <div className="text-center">
-                      <div className="text-2xl font-bold">{sessionBalance.totalCovered}</div>
+                      <div className="text-2xl font-bold font-mono">{sessionBalance.totalCovered}</div>
                       <p className="text-sm text-muted-foreground">Total Paid</p>
                     </div>
                   </div>
@@ -206,7 +182,7 @@ const ClientDetails = () => {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Link2 className="h-5 w-5" />
+                  <Link2 className="h-5 w-5 text-primary" />
                   Share Booking Link
                 </CardTitle>
               </CardHeader>
@@ -219,17 +195,14 @@ const ClientDetails = () => {
                     type="text"
                     value={`https://cal.com/${coachProfile.cal_username}`}
                     readOnly
-                    className="flex-1 px-3 py-2 text-sm border rounded-md bg-muted font-mono"
+                    className="flex-1 px-3 py-2 text-sm border border-white/[0.06] rounded-[10px] bg-white/[0.05] font-mono text-foreground"
                   />
                   <Button
                     variant="outline"
                     size="icon"
                     onClick={() => {
                       navigator.clipboard.writeText(`https://cal.com/${coachProfile.cal_username}`);
-                      toast({
-                        title: "Copied!",
-                        description: "Booking link copied to clipboard",
-                      });
+                      toast({ title: "Copied!", description: "Booking link copied to clipboard" });
                     }}
                   >
                     <Copy className="h-4 w-4" />
@@ -243,8 +216,8 @@ const ClientDetails = () => {
           )}
         </div>
 
-        {/* Tabs for Notes, Videos, Payments, and Lesson Plans */}
-        <Tabs defaultValue="notes" className="space-y-4">
+        {/* Tabs */}
+        <Tabs defaultValue="notes" className="space-y-6">
           <TabsList>
             <TabsTrigger value="notes">Progress Notes</TabsTrigger>
             <TabsTrigger value="videos">Training Videos</TabsTrigger>
@@ -254,7 +227,7 @@ const ClientDetails = () => {
 
           <TabsContent value="notes" className="space-y-4">
             <div className="flex justify-between items-center">
-              <h2 className="text-xl font-semibold">Progress Notes</h2>
+              <h2 className="text-xl font-semibold font-heading">Progress Notes</h2>
               <AddNoteDialog clientId={clientId!} clientName={client.full_name} />
             </div>
             <NotesList clientId={clientId!} />
@@ -262,7 +235,7 @@ const ClientDetails = () => {
 
           <TabsContent value="videos" className="space-y-4">
             <div className="flex justify-between items-center">
-              <h2 className="text-xl font-semibold">Training Videos</h2>
+              <h2 className="text-xl font-semibold font-heading">Training Videos</h2>
               <AddVideoDialog clientId={clientId!} clientName={client.full_name} />
             </div>
             <VideosList clientId={clientId!} />
@@ -270,7 +243,7 @@ const ClientDetails = () => {
 
           <TabsContent value="payments" className="space-y-4">
             <div className="flex justify-between items-center">
-              <h2 className="text-xl font-semibold">Payment History</h2>
+              <h2 className="text-xl font-semibold font-heading">Payment History</h2>
               <AddPaymentDialog clientId={clientId!} clientName={client.full_name} />
             </div>
             <PaymentsList clientId={clientId!} />
@@ -278,7 +251,7 @@ const ClientDetails = () => {
 
           <TabsContent value="lessonplans" className="space-y-4">
             <div className="flex justify-between items-center">
-              <h2 className="text-xl font-semibold">Lesson Plans</h2>
+              <h2 className="text-xl font-semibold font-heading">Lesson Plans</h2>
             </div>
             <LessonPlansList clientId={clientId!} />
           </TabsContent>

@@ -13,7 +13,7 @@ const Earn = () => {
             </div>
             <div className="space-y-2">
               <div className="flex items-center justify-center gap-2">
-                <CardTitle className="text-2xl">Coming Soon!</CardTitle>
+                <CardTitle className="text-2xl font-heading">Coming Soon!</CardTitle>
                 <Sparkles className="w-5 h-5 text-primary" />
               </div>
               <CardDescription className="text-base">

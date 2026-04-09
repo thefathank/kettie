@@ -8,9 +8,7 @@ import { format } from "date-fns";
 import { DollarSign } from "lucide-react";
 import { EditPaymentDialog } from "./EditPaymentDialog";
 
-interface PaymentsListProps {
-  clientId: string;
-}
+interface PaymentsListProps { clientId: string; }
 
 export function PaymentsList({ clientId }: PaymentsListProps) {
   const { user } = useAuth();
@@ -19,14 +17,7 @@ export function PaymentsList({ clientId }: PaymentsListProps) {
     queryKey: ["payments", clientId, user?.id],
     queryFn: async () => {
       if (!user?.id) return [];
-
-      const { data, error } = await supabase
-        .from("payments")
-        .select("*")
-        .eq("client_id", clientId)
-        .eq("coach_id", user.id)
-        .order("payment_date", { ascending: false });
-
+      const { data, error } = await supabase.from("payments").select("*").eq("client_id", clientId).eq("coach_id", user.id).order("payment_date", { ascending: false });
       if (error) throw error;
       return data;
     },
@@ -36,13 +27,7 @@ export function PaymentsList({ clientId }: PaymentsListProps) {
   if (isLoading) {
     return (
       <div className="space-y-4">
-        {[1, 2, 3].map((i) => (
-          <Card key={i}>
-            <CardContent className="pt-6">
-              <Skeleton className="h-24 w-full" />
-            </CardContent>
-          </Card>
-        ))}
+        {[1, 2, 3].map((i) => (<Card key={i}><CardContent className="pt-6"><Skeleton className="h-24 w-full bg-white/[0.06]" /></CardContent></Card>))}
       </div>
     );
   }
@@ -50,11 +35,9 @@ export function PaymentsList({ clientId }: PaymentsListProps) {
   if (!payments || payments.length === 0) {
     return (
       <Card>
-        <CardContent className="pt-6 text-center py-12">
-          <DollarSign className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-          <p className="text-muted-foreground">
-            No payments recorded yet. Add your first payment to start tracking!
-          </p>
+        <CardContent className="pt-6 text-center py-16">
+          <DollarSign className="h-12 w-12 mx-auto mb-4 text-white/[0.15]" />
+          <p className="text-muted-foreground">No payments recorded yet. Add your first payment to start tracking!</p>
         </CardContent>
       </Card>
     );
@@ -67,7 +50,7 @@ export function PaymentsList({ clientId }: PaymentsListProps) {
           <CardHeader>
             <div className="flex items-start justify-between">
               <div className="flex-1">
-                <CardTitle className="text-lg">
+                <CardTitle className="text-lg font-mono">
                   ${payment.amount} {payment.currency}
                 </CardTitle>
                 <p className="text-sm text-muted-foreground mt-1">
@@ -76,9 +59,7 @@ export function PaymentsList({ clientId }: PaymentsListProps) {
               </div>
               <div className="flex items-center gap-2">
                 <div className="flex flex-col items-end gap-2">
-                  <Badge variant={payment.payment_status === "completed" ? "default" : "secondary"}>
-                    {payment.payment_status}
-                  </Badge>
+                  <Badge variant={payment.payment_status === "completed" ? "default" : "secondary"}>{payment.payment_status}</Badge>
                   <Badge variant="outline">{payment.payment_type}</Badge>
                 </div>
                 <EditPaymentDialog payment={payment} clientId={clientId} />
@@ -89,23 +70,19 @@ export function PaymentsList({ clientId }: PaymentsListProps) {
             <div className="grid grid-cols-3 gap-4 mb-4">
               <div>
                 <p className="text-sm text-muted-foreground">Sessions Covered</p>
-                <p className="text-lg font-semibold">{payment.sessions_covered || 0}</p>
+                <p className="text-lg font-semibold font-mono">{payment.sessions_covered || 0}</p>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Sessions Used</p>
-                <p className="text-lg font-semibold">
-                  {(payment.sessions_covered || 0) - (payment.sessions_remaining || 0)}
-                </p>
+                <p className="text-lg font-semibold font-mono">{(payment.sessions_covered || 0) - (payment.sessions_remaining || 0)}</p>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Sessions Remaining</p>
-                <p className="text-lg font-semibold text-primary">
-                  {payment.sessions_remaining || 0}
-                </p>
+                <p className="text-lg font-semibold font-mono text-primary">{payment.sessions_remaining || 0}</p>
               </div>
             </div>
             {payment.description && (
-              <div className="pt-4 border-t">
+              <div className="pt-4 border-t border-white/[0.06]">
                 <p className="text-sm text-muted-foreground mb-1">Description:</p>
                 <p className="text-sm">{payment.description}</p>
               </div>
