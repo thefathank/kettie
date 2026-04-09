@@ -92,90 +92,9 @@ const Landing = () => {
     { icon: BarChart3, title: "Analytics", desc: "Revenue, sessions, and client growth at a glance.", span: "" },
   ];
 
-  const scenes = [
-    {
-      title: "Your command center",
-      bullets: ["At-a-glance stats for sessions, revenue, and clients", "Today's schedule front and center", "Quick actions to add clients and sessions"],
-      alt: "Dashboard",
-      mockup: (
-        <div className="space-y-3">
-          <div className="grid grid-cols-3 gap-2">
-            {[{ label: "Clients", val: "24" }, { label: "Sessions", val: "128" }, { label: "Revenue", val: "$4,200" }].map(s => (
-              <div key={s.label} className="glass rounded-xl p-3 text-center">
-                <div className="text-lg font-bold font-mono text-foreground">{s.val}</div>
-                <div className="text-[10px] text-muted-foreground">{s.label}</div>
-              </div>
-            ))}
-          </div>
-          <div className="glass rounded-xl p-3">
-            <div className="text-xs text-muted-foreground mb-2">Today's Schedule</div>
-            {["9:00 AM — Alex M.", "10:30 AM — Sarah K.", "2:00 PM — Group"].map(r => (
-              <div key={r} className="flex items-center gap-2 py-1.5 border-b border-white/[0.04] last:border-0">
-                <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                <span className="text-xs text-foreground/80">{r}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      ),
-    },
-    {
-      title: "Scheduling, simplified",
-      bullets: ["Calendar view with drag-and-drop sessions", "Recurring session support", "Client self-booking via Cal.com integration"],
-      alt: "Schedule",
-      mockup: (
-        <div className="space-y-3">
-          <div className="grid grid-cols-7 gap-1">
-            {["M","T","W","T","F","S","S"].map((d,i) => (
-              <div key={i} className="text-center text-[10px] text-muted-foreground/60 pb-1">{d}</div>
-            ))}
-            {Array.from({length: 14}, (_,i) => (
-              <div key={i} className={`aspect-square rounded-md text-[10px] flex items-center justify-center ${i === 2 || i === 5 || i === 9 ? 'bg-primary/20 text-primary border border-primary/30' : 'bg-white/[0.03] text-muted-foreground/50'}`}>
-                {i + 1}
-              </div>
-            ))}
-          </div>
-          <div className="glass rounded-xl p-3 space-y-2">
-            {[{ time: "9:00", name: "Alex M.", type: "Private" }, { time: "11:00", name: "Group A", type: "Group" }].map(s => (
-              <div key={s.time} className="flex items-center justify-between py-1">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-mono text-primary">{s.time}</span>
-                  <span className="text-xs text-foreground/80">{s.name}</span>
-                </div>
-                <span className="text-[10px] text-muted-foreground bg-white/[0.06] px-2 py-0.5 rounded-full">{s.type}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      ),
-    },
-    {
-      title: "Lessons that stick",
-      bullets: ["Reusable lesson templates with exercises", "Assign plans to clients after each session", "Email lesson plans directly to clients"],
-      alt: "Lessons",
-      mockup: (
-        <div className="space-y-3">
-          <div className="glass rounded-xl p-3">
-            <div className="text-xs font-semibold text-foreground mb-2">Forehand Mechanics</div>
-            <div className="space-y-1.5">
-              {["Grip adjustment drill — 10 min", "Shadow swings — 15 min", "Cross-court rally — 20 min"].map(ex => (
-                <div key={ex} className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded border border-primary/40 flex items-center justify-center">
-                    <div className="w-1.5 h-1.5 rounded-sm bg-primary" />
-                  </div>
-                  <span className="text-[11px] text-muted-foreground">{ex}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="glass rounded-xl p-3">
-            <div className="text-xs font-semibold text-foreground mb-1">Serve & Return</div>
-            <div className="text-[10px] text-muted-foreground">4 exercises · 45 min</div>
-          </div>
-        </div>
-      ),
-    },
-  ];
+  const protoViews = ["Dashboard", "Clients", "Schedule", "Lessons", "Payments"] as const;
+  const protoIcons = { Dashboard: LayoutDashboard, Clients: Users, Schedule: Calendar, Lessons: BookOpen, Payments: CreditCard };
+  const [activeView, setActiveView] = useState<typeof protoViews[number]>("Dashboard");
 
   const coachTypes = [
     { img: coachPrivate, alt: "Private lesson coach", title: "Private Coach", desc: "One-on-one session management with personalized lesson plans." },
