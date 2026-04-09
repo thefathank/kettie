@@ -29,6 +29,19 @@ const Landing = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [sessionsPerWeek, setSessionsPerWeek] = useState(15);
+
+  const calcData = useMemo(() => {
+    const manualMinPerSession = 18; // scheduling, notes, follow-up, payment tracking
+    const appMinPerSession = 4;
+    const manualHrsWeek = (sessionsPerWeek * manualMinPerSession) / 60;
+    const appHrsWeek = (sessionsPerWeek * appMinPerSession) / 60;
+    const savedHrsWeek = manualHrsWeek - appHrsWeek;
+    const savedHrsYear = savedHrsWeek * 50;
+    const manualPct = 100;
+    const appPct = (appHrsWeek / manualHrsWeek) * 100;
+    return { manualHrsWeek: manualHrsWeek.toFixed(1), appHrsWeek: appHrsWeek.toFixed(1), savedHrsWeek: savedHrsWeek.toFixed(1), savedHrsYear: Math.round(savedHrsYear), manualPct, appPct };
+  }, [sessionsPerWeek]);
 
   useEffect(() => {
     const handleScroll = () => setNavScrolled(window.scrollY > 40);
